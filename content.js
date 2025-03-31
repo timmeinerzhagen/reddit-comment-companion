@@ -7,18 +7,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const comments = await fetchComments(postId);
       showComments(button, comments);
     });
+
+    button.addEventListener('mouseleave', () => {
+      hideComments();
+    });
   });
 });
 
 async function fetchComments(postId) {
-  const response = await fetch(`https://www.reddit.com/comments/${postId}.json`);
-  const data = await response.json();
-  return data[1].data.children.map(child => child.data);
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'fetchComments', postId }, (response) => {
+      if (response.error) {
+        reject(response.error);
+      } else {
+        resolve(response.comments);
+      }
+    });
+  });
 }
 
 function showComments(button, comments) {
   const commentsContainer = document.createElement('div');
   commentsContainer.classList.add('comments-container');
+  commentsContainer.style.position = 'absolute';
+  commentsContainer.style.top = `${button.getBoundingClientRect().top + window.scrollY}px`;
+  commentsContainer.style.left = `${button.getBoundingClientRect().left + window.scrollX}px`;
+  commentsContainer.style.backgroundColor = 'white';
+  commentsContainer.style.border = '1px solid #ddd';
+  commentsContainer.style.padding = '10px';
+  commentsContainer.style.zIndex = '1000';
 
   comments.forEach(comment => {
     const commentElement = document.createElement('div');
@@ -27,5 +44,16 @@ function showComments(button, comments) {
     commentsContainer.appendChild(commentElement);
   });
 
-  button.parentElement.appendChild(commentsContainer);
+  document.body.appendChild(commentsContainer);
+
+  commentsContainer.addEventListener('mouseleave', () => {
+    hideComments();
+  });
+}
+
+function hideComments() {
+  const commentsContainer = document.querySelector('.comments-container');
+  if (commentsContainer) {
+    commentsContainer.remove();
+  }
 }
