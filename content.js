@@ -1,28 +1,34 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const commentButtons = document.querySelectorAll('.comment-button');
 
-  commentButtons.forEach(button => {
-    button.addEventListener('mouseover', async () => {
-      const postId = button.getAttribute('data-post-id');
-      const comments = await fetchComments(postId);
-      showComments(button, comments);
-    });
+// On Hover for Reddit Comments
+const commentButtons = document.querySelectorAll('a.comments');
+commentButtons.forEach(button => {
+  button.addEventListener('mouseover', async () => {
+    const postId = button.getAttribute('data-post-id');
+    const href = button.getAttribute('href');
+    const comments = await fetchComments(href);
+    console.log("Hi")
+    showComments(button, comments);
+  });
 
-    button.addEventListener('mouseleave', () => {
-      hideComments();
-    });
+  button.addEventListener('mouseleave', () => {
+    hideComments();
+    console.log("Bye")
   });
 });
 
-async function fetchComments(postId) {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage({ type: 'fetchComments', postId }, (response) => {
-      if (response.error) {
-        reject(response.error);
-      } else {
-        resolve(response.comments);
+async function fetchComments(href) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`${href}.json`);
+      if (!response.ok) {
+        reject(`Error fetching comments: ${response.statusText}`);
       }
-    });
+      const data = await response.json();
+      const comments = data[1].data.children.map(child => child.data);
+      resolve(comments);
+    } catch (error) {
+      reject(`Error: ${error.message}`);
+    }
   });
 }
 
