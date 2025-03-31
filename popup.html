@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reddit Comment Companion</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+    }
+    #comments-container {
+      margin-top: 10px;
+    }
+    .comment {
+      border-bottom: 1px solid #ddd;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reddit Comment Companion</h1>
+  <button id="open-comments">Open Comments</button>
+  <div id="comments-container"></div>
+
+  <script>
+    document.getElementById('open-comments').addEventListener('click', () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'fetchComments' }, (response) => {
+          const commentsContainer = document.getElementById('comments-container');
+          commentsContainer.innerHTML = '';
+          response.comments.forEach(comment => {
+            const commentElement = document.createElement('div');
+            commentElement.classList.add('comment');
+            commentElement.textContent = comment.body;
+            commentsContainer.appendChild(commentElement);
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
