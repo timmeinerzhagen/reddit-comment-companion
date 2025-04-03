@@ -92,15 +92,15 @@ function createCommentsContainer(comments) {
 
 function createComment(comment, level, maxLevel) {
   const commentElement = document.createElement('div');
+  if (!comment.author) return commentElement
   commentElement.classList.add(level>0 ? 'reply' : 'comment');
   Object.assign(commentElement.style, level>0 ? {
-    marginLeft: `10px`,
-    padding: '5px 0',
+    marginLeft: '10px',
     borderLeft: '2px solid #343536',
-    paddingLeft: '10px',
+    paddingLeft: '15px',
     fontSize: '13px'
   } : {
-    padding: '10px 0',
+    padding: '6px 0',
     fontSize: '14px',
     borderBottom: '1px solid #343536',
   });
@@ -125,12 +125,47 @@ function createComment(comment, level, maxLevel) {
   commentElement.appendChild(metadata);
 
   // Add comment body
-  const commentBody = document.createElement('p');
-  commentBody.textContent = comment.body;
-  Object.assign(commentBody.style, {
-    margin: '5px 0',
-  });
-  commentElement.appendChild(commentBody);
+  if (comment.body) {
+    const commentBody = document.createElement('div'); // Changed from 'p' to 'div'
+    commentBody.innerHTML = marked.parse(comment.body);
+    Object.assign(commentBody.style, {
+      margin: '5px 0',
+    });
+
+    // Add styles for markdown elements
+    const markdownStyles = {
+      'p': { margin: '0 0 10px 0' },
+      'code': { 
+        backgroundColor: '#2a2a2b',
+        padding: '2px 4px',
+        borderRadius: '3px',
+        fontSize: '85%'
+      },
+      'pre': { 
+        backgroundColor: '#2a2a2b',
+        padding: '10px',
+        borderRadius: '4px',
+        overflow: 'auto'
+      },
+      'blockquote': {
+        borderLeft: '3px solid #4a4a4b',
+        margin: '0',
+        paddingLeft: '10px',
+        color: '#a5a5a6'
+      },
+      'a': {
+        color: '#0079D3',
+        textDecoration: 'none'
+      }
+    };
+
+    Object.entries(markdownStyles).forEach(([element, styles]) => {
+      const elements = commentBody.getElementsByTagName(element);
+      Array.from(elements).forEach(el => Object.assign(el.style, styles));
+    });
+
+    commentElement.appendChild(commentBody);
+  }
 
   // Add top reply if available
   if (comment.replies && comment.replies[0] && level<maxLevel) {
