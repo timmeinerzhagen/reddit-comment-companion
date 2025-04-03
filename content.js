@@ -107,13 +107,14 @@ function createComment(comment, level, maxLevel) {
 
   // Add comment metadata (author, votes, and link)
   const metadata = document.createElement('div');
+  metadata.style.color = 'rgb(166, 166, 166)';
   metadata.innerHTML = `
-    <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
+    <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: inherit; text-decoration: none;">
       <strong>${comment.author}</strong>
     </a> | 
     ${comment.ups > 0 ? '+' : ''}${comment.ups} |
     ${timeAgo(comment.created_utc)} |
-    <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
+    <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: inherit; text-decoration: none;">
       Comment
     </a>
   `;
