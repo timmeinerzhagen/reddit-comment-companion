@@ -63,26 +63,66 @@ function createCommentsContainer(comments) {
     overflow: 'auto',
     scrollbarWidth: 'none', // For Firefox
     msOverflowStyle: 'none', // For Internet Explorer and Edge
-    });
-
-  // Hide scrollbar for Webkit-based browsers (Chrome, Safari, etc.)
-  commentsContainer.style.setProperty('overflow', 'auto');
-  commentsContainer.style.setProperty('scrollbar-width', 'none'); // Firefox
-  commentsContainer.style.setProperty('-ms-overflow-style', 'none'); // IE/Edge
-  commentsContainer.style.setProperty('::-webkit-scrollbar', 'display', 'none'); // Webkit
+  });
 
   comments.forEach(comment => {
     const commentElement = document.createElement('div');
     commentElement.classList.add('comment');
     Object.assign(commentElement.style, {
-      'padding': '5px 0',
+      'padding': '10px 0',
       'font-size': '14px',
       'borderBottom': '1px solid #343536',
     });
 
-    commentElement.textContent = comment.body;
-    commentsContainer.appendChild(commentElement);
-  });  
+    // Add comment metadata (author, votes, and link) in one line
+      const metadata = document.createElement('div');
+      metadata.innerHTML = `
+        <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
+          <strong>${comment.author}</strong>
+        </a> | 
+        ${comment.ups > 0 ? '+' : ''}${comment.ups} |
+        ${timeAgo(comment.created_utc)} |
+        <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
+          Comment
+        </a>
+      `;
+            
+      Object.assign(metadata.style, {
+        marginBottom: '5px',
+        fontSize: '12px',
+      });
+      commentElement.appendChild(metadata);
 
+      // Add comment body
+      const commentBody = document.createElement('p');
+      commentBody.textContent = comment.body;
+      Object.assign(commentBody.style, {
+        margin: '5px 0',
+      });
+      commentElement.appendChild(commentBody);
+
+      commentsContainer.appendChild(commentElement);
+  });
   return commentsContainer;
+}
+
+
+function timeAgo(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp * 1000) / 1000);
+  const intervals = [
+    { label: 'y', seconds: 31536000 },
+    { label: 'm', seconds: 2592000 },
+    { label: 'd', seconds: 86400 },
+    { label: 'h', seconds: 3600 },
+    { label: 'm', seconds: 60 },
+    { label: 's', seconds: 1 },
+  ];
+
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds);
+    if (count > 0) {
+      return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`;
+    }
+  }
+  return 'just now';
 }
