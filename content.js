@@ -4,6 +4,7 @@ commentButtons.forEach(button => {
   button.addEventListener('mouseover', async () => {
     const postId = button.getAttribute('data-post-id');
     const href = button.getAttribute('href');
+    localStorage.setItem('reddit-comment-companion-post', href);
     const comments = await fetchComments(href);
     showComments(button, comments);
   });
@@ -57,6 +58,8 @@ function createCommentsContainer(comments) {
   const commentsContainer = document.createElement('div');
   commentsContainer.classList.add('comments-container');
 
+  const containerWidth = localStorage.getItem('reddit-comment-companion-containerWidth') || '20';
+
   Object.assign(commentsContainer.style, {
     position: 'fixed',
     top: '0',
@@ -65,7 +68,7 @@ function createCommentsContainer(comments) {
     border: '1px solid #343536',
     padding: '10px',
     zIndex: '1000',
-    width: '20vw', // 20% of the viewport width
+    width: `${containerWidth}vw`, // Use the configured width
     height: '100vh', // Full viewport height
     borderRadius: '8px',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.5)',
@@ -78,16 +81,22 @@ function createCommentsContainer(comments) {
 
   // Add settings button
   const settingsButton = document.createElement('button');
-  settingsButton.textContent = 'Settings';
+  const settingsIcon = document.createElement('span');
+  // Unicode for gear icon
+  settingsIcon.innerHTML = '&#9881;'; 
+  settingsIcon.style.fontSize = '16px';
+  settingsIcon.style.display = 'inline-block';
+  settingsIcon.style.verticalAlign = 'middle';
+  settingsButton.appendChild(settingsIcon);
+
   Object.assign(settingsButton.style, {
     position: 'absolute',
     top: '10px',
     right: '10px',
-    backgroundColor: '#0079D3',
     color: '#FFFFFF',
     border: 'none',
     borderRadius: '4px',
-    padding: '5px 10px',
+    padding: '2px 5px',
     cursor: 'pointer',
     fontSize: '12px',
   });
@@ -107,21 +116,29 @@ function createCommentsContainer(comments) {
       zIndex: '1001',
     });
 
+    const sortOption = localStorage.getItem("reddit-comment-companion-sortOption") || "top";
+    const maxLevel = localStorage.getItem("reddit-comment-companion-maxLevel") || 1;
+    const containerWidth = localStorage.getItem("reddit-comment-companion-containerWidth") || 20;
+
     settingsModal.innerHTML = `
       <label style="display: block; margin-bottom: 10px;">
-        Sort Comments By:
-        <select id="sortOptionInput" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
-          <option value="top">Top</option>
-          <option value="confidence">Best</option>
-          <option value="new">New</option>
-          <option value="controversial">Controversial</option>
-          <option value="old">Old</option>
-          <option value="qa">Q&A</option>
-        </select>
+      Sort Comments By:
+      <select id="sortOptionInput" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
+        <option value="top" ${ sortOption === "top" ? "selected" : ""}>Top</option>
+        <option value="confidence" ${sortOption === "confidence" ? "selected" : ""}>Best</option>
+        <option value="new" ${sortOption === "new" ? "selected" : ""}>New</option>
+        <option value="controversial" ${sortOption === "controversial" ? "selected" : ""}>Controversial</option>
+        <option value="old" ${sortOption === "old" ? "selected" : ""}>Old</option>
+        <option value="qa" ${sortOption === "qa" ? "selected" : ""}>Q&A</option>
+      </select>
       </label>
       <label style="display: block; margin-bottom: 10px;">
-        Max Reply Level:
-        <input type="number" id="maxLevelInput" value="1" min="1" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
+      Max Reply Level:
+      <input type="number" id="maxLevelInput" value="${maxLevel}" min="1" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
+      </label>
+      <label style="display: block; margin-bottom: 10px;">
+      Container Width (% of screen):
+      <input type="number" id="containerWidthInput" value="${containerWidth}" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
       </label>
       <button id="saveSettingsButton" style="margin-top: 10px; background-color: #0079D3; color: #FFFFFF; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">Save</button>
     `;
@@ -131,12 +148,26 @@ function createCommentsContainer(comments) {
     document.getElementById('saveSettingsButton').addEventListener('click', () => {
       const maxLevel = parseInt(document.getElementById('maxLevelInput').value, 10);
       const sortOption = document.getElementById('sortOptionInput').value;
+      const containerWidth = document.getElementById('containerWidthInput').value;
 
       localStorage.setItem('reddit-comment-companion-maxLevel', maxLevel);
       localStorage.setItem('reddit-comment-companion-sortOption', sortOption);
+      localStorage.setItem('reddit-comment-companion-containerWidth', containerWidth);
 
       settingsModal.remove();
-    });
+
+      // Reload comments container
+      const commentsContainer = document.querySelector('.comments-container');
+      if (commentsContainer) {
+        const href = localStorage.getItem('reddit-comment-companion-post');
+        fetchComments(href).then(comments => {
+        const newCommentsContainer = createCommentsContainer(comments);
+        commentsContainer.replaceWith(newCommentsContainer);
+        }).catch(error => {
+          console.error('Error reloading comments:', error);
+        });
+      }
+    });   
   });
 
   commentsContainer.appendChild(settingsButton);
