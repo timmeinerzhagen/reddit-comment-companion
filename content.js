@@ -13,7 +13,7 @@ commentButtons.forEach(button => {
 async function fetchComments(href) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`${href}.json`);
+      const response = await fetch(`${href}.json?sort=top`);
       if (!response.ok) {
         reject(`Error fetching comments: ${response.statusText}`);
       }
