@@ -17,9 +17,17 @@ async function fetchComments(href) {
         reject(`Error fetching comments: ${response.statusText}`);
       }
       const data = await response.json();
+      function extractReplies(comment) {
+        if (!comment.replies || !comment.replies.data) return [];
+        return comment.replies.data.children.map(child => ({
+          ...child.data,
+          replies: extractReplies(child.data)
+        }));
+      }
+
       const comments = data[1].data.children.map(child => ({
         ...child.data,
-        topReply: child.data.replies?.data?.children[0]?.data || null
+        replies: extractReplies(child.data)
       }));
       resolve(comments);
     } catch (error) {
@@ -68,85 +76,61 @@ function createCommentsContainer(comments) {
   });
 
   comments.forEach(comment => {
-    const commentElement = document.createElement('div');
-    commentElement.classList.add('comment');
-    Object.assign(commentElement.style, {
-      'padding': '10px 0',
-      'font-size': '14px',
-      'borderBottom': '1px solid #343536',
-    });
-
-    // Add comment metadata (author, votes, and link) in one line
-      const metadata = document.createElement('div');
-      metadata.innerHTML = `
-        <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
-          <strong>${comment.author}</strong>
-        </a> | 
-        ${comment.ups > 0 ? '+' : ''}${comment.ups} |
-        ${timeAgo(comment.created_utc)} |
-        <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
-          Comment
-        </a>
-      `;
-            
-      Object.assign(metadata.style, {
-        marginBottom: '5px',
-        fontSize: '12px',
-      });
-      commentElement.appendChild(metadata);
-
-      // Add comment body
-      const commentBody = document.createElement('p');
-      commentBody.textContent = comment.body;
-      Object.assign(commentBody.style, {
-        margin: '5px 0',
-      });
-      commentElement.appendChild(commentBody);
-
-      // Add top reply
-      if (comment.topReply) {
-        const replyElement = document.createElement('div');
-        replyElement.classList.add('reply');
-        Object.assign(replyElement.style, {
-          'marginLeft': '20px',
-          'padding': '5px 0',
-          'borderLeft': '2px solid #343536',
-          'paddingLeft': '10px',
-          'fontSize': '13px'
-        });
-
-        // Add reply metadata
-        const replyMetadata = document.createElement('div');
-        replyMetadata.innerHTML = `
-          <a href="https://www.reddit.com/user/${comment.topReply.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
-            <strong>${comment.topReply.author}</strong>
-          </a> | 
-          ${comment.topReply.ups > 0 ? '+' : ''}${comment.topReply.ups} |
-          ${timeAgo(comment.topReply.created_utc)} |
-          <a href="https://www.reddit.com${comment.topReply.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
-            Comment
-          </a>
-        `;
-        Object.assign(replyMetadata.style, {
-          marginBottom: '3px',
-          fontSize: '11px'
-        });
-        replyElement.appendChild(replyMetadata);
-
-        // Add reply body
-        const replyBody = document.createElement('p');
-        replyBody.textContent = comment.topReply.body;
-        Object.assign(replyBody.style, {
-          margin: '3px 0'
-        });
-        replyElement.appendChild(replyBody);
-        
-        commentElement.appendChild(replyElement);
-      }
-
-      commentsContainer.appendChild(commentElement);
+    const commentElement = createComment(comment, 0, 1);
+    commentsContainer.appendChild(commentElement);
   });
+
   return commentsContainer;
+}
+
+function createComment(comment, level, maxLevel) {
+  const commentElement = document.createElement('div');
+  commentElement.classList.add(level>0 ? 'reply' : 'comment');
+  Object.assign(commentElement.style, level>0 ? {
+    marginLeft: `${20*level}px`,
+    padding: '5px 0',
+    borderLeft: '2px solid #343536',
+    paddingLeft: '10px',
+    fontSize: '13px'
+  } : {
+    padding: '10px 0',
+    fontSize: '14px',
+    borderBottom: '1px solid #343536',
+  });
+
+  // Add comment metadata (author, votes, and link)
+  const metadata = document.createElement('div');
+  metadata.innerHTML = `
+    <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
+      <strong>${comment.author}</strong>
+    </a> | 
+    ${comment.ups > 0 ? '+' : ''}${comment.ups} |
+    ${timeAgo(comment.created_utc)} |
+    <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
+      Comment
+    </a>
+  `;
+  Object.assign(metadata.style, {
+    marginBottom: '5px',
+    fontSize: level>0 ? '11px' : '12px',
+  });
+  commentElement.appendChild(metadata);
+
+  // Add comment body
+  const commentBody = document.createElement('p');
+  commentBody.textContent = comment.body;
+  Object.assign(commentBody.style, {
+    margin: '5px 0',
+  });
+  commentElement.appendChild(commentBody);
+
+  // Add top reply if available
+  if (comment.replies && comment.replies[0] && level<maxLevel) {
+    const replyElement = createComment(comment.replies[0], level+1, maxLevel);
+    commentElement.appendChild(replyElement);
+  }
+
+  return commentElement;
 }
 
 
