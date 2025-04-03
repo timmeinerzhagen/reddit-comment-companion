@@ -12,7 +12,8 @@ commentButtons.forEach(button => {
 async function fetchComments(href) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`${href}.json?sort=top`);
+      const sortOption = localStorage.getItem('reddit-comment-companion-sortOption') || 'top';
+      const response = await fetch(`${href}.json?sort=${sortOption}`);
       if (!response.ok) {
         reject(`Error fetching comments: ${response.statusText}`);
       }
@@ -75,8 +76,73 @@ function createCommentsContainer(comments) {
     msOverflowStyle: 'none', // For Internet Explorer and Edge
   });
 
+  // Add settings button
+  const settingsButton = document.createElement('button');
+  settingsButton.textContent = 'Settings';
+  Object.assign(settingsButton.style, {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    backgroundColor: '#0079D3',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '5px 10px',
+    cursor: 'pointer',
+    fontSize: '12px',
+  });
+
+  settingsButton.addEventListener('click', () => {
+    const settingsModal = document.createElement('div');
+    Object.assign(settingsModal.style, {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      backgroundColor: '#1A1A1B',
+      color: '#D7DADC',
+      padding: '20px',
+      borderRadius: '8px',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.5)',
+      zIndex: '1001',
+    });
+
+    settingsModal.innerHTML = `
+      <label style="display: block; margin-bottom: 10px;">
+        Sort Comments By:
+        <select id="sortOptionInput" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
+          <option value="top">Top</option>
+          <option value="confidence">Best</option>
+          <option value="new">New</option>
+          <option value="controversial">Controversial</option>
+          <option value="old">Old</option>
+          <option value="qa">Q&A</option>
+        </select>
+      </label>
+      <label style="display: block; margin-bottom: 10px;">
+        Max Reply Level:
+        <input type="number" id="maxLevelInput" value="1" min="1" style="margin-left: 10px; padding: 5px; border-radius: 4px; border: 1px solid #343536; background-color: #2A2A2B; color: #D7DADC;">
+      </label>
+      <button id="saveSettingsButton" style="margin-top: 10px; background-color: #0079D3; color: #FFFFFF; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">Save</button>
+    `;
+
+    document.body.appendChild(settingsModal);
+
+    document.getElementById('saveSettingsButton').addEventListener('click', () => {
+      const maxLevel = parseInt(document.getElementById('maxLevelInput').value, 10);
+      const sortOption = document.getElementById('sortOptionInput').value;
+
+      localStorage.setItem('reddit-comment-companion-maxLevel', maxLevel);
+      localStorage.setItem('reddit-comment-companion-sortOption', sortOption);
+
+      settingsModal.remove();
+    });
+  });
+
+  commentsContainer.appendChild(settingsButton);
+
   comments.forEach(comment => {
-    const commentElement = createComment(comment, 0, 1);
+    const commentElement = createComment(comment, 0, localStorage.getItem('reddit-comment-companion-maxLevel') || 1);
     commentsContainer.appendChild(commentElement);
   });
 
@@ -87,7 +153,7 @@ function createComment(comment, level, maxLevel) {
   const commentElement = document.createElement('div');
   commentElement.classList.add(level>0 ? 'reply' : 'comment');
   Object.assign(commentElement.style, level>0 ? {
-    marginLeft: `${20*level}px`,
+    marginLeft: `10px`,
     padding: '5px 0',
     borderLeft: '2px solid #343536',
     paddingLeft: '10px',
@@ -126,8 +192,10 @@ function createComment(comment, level, maxLevel) {
 
   // Add top reply if available
   if (comment.replies && comment.replies[0] && level<maxLevel) {
-    const replyElement = createComment(comment.replies[0], level+1, maxLevel);
-    commentElement.appendChild(replyElement);
+    comment.replies.slice(0, maxLevel - level).forEach(reply => {
+      const replyElement = createComment(reply, level + 1, maxLevel);
+      commentElement.appendChild(replyElement);
+    });
   }
 
   return commentElement;
