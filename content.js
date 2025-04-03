@@ -68,8 +68,8 @@ function createCommentsContainer(comments) {
     border: '1px solid #343536',
     padding: '10px',
     zIndex: '1000',
-    width: `${containerWidth}vw`, // Use the configured width
-    height: '100vh', // Full viewport height
+    width: `${containerWidth}vw`,
+    height: '100vh',
     borderRadius: '8px',
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.5)',
     color: '#D7DADC',
@@ -78,13 +78,77 @@ function createCommentsContainer(comments) {
     scrollbarWidth: 'none', // For Firefox
     msOverflowStyle: 'none', // For Internet Explorer and Edge
   });
+  
+  commentsContainer.appendChild(createButtonSettings());
+  commentsContainer.appendChild(createButtonClose());
 
+  comments.forEach(comment => {
+    const commentElement = createComment(comment, 0, localStorage.getItem('reddit-comment-companion-maxLevel') || 1);
+    commentsContainer.appendChild(commentElement);
+  });
+
+  return commentsContainer;
+}
+
+function createComment(comment, level, maxLevel) {
+  const commentElement = document.createElement('div');
+  commentElement.classList.add(level>0 ? 'reply' : 'comment');
+  Object.assign(commentElement.style, level>0 ? {
+    marginLeft: `10px`,
+    padding: '5px 0',
+    borderLeft: '2px solid #343536',
+    paddingLeft: '10px',
+    fontSize: '13px'
+  } : {
+    padding: '10px 0',
+    fontSize: '14px',
+    borderBottom: '1px solid #343536',
+  });
+
+  // Add comment metadata (author, votes, and link)
+  const metadata = document.createElement('div');
+  metadata.innerHTML = `
+    <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
+      <strong>${comment.author}</strong>
+    </a> | 
+    ${comment.ups > 0 ? '+' : ''}${comment.ups} |
+    ${timeAgo(comment.created_utc)} |
+    <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
+      Comment
+    </a>
+  `;
+  Object.assign(metadata.style, {
+    marginBottom: '5px',
+    fontSize: level>0 ? '11px' : '12px',
+  });
+  commentElement.appendChild(metadata);
+
+  // Add comment body
+  const commentBody = document.createElement('p');
+  commentBody.textContent = comment.body;
+  Object.assign(commentBody.style, {
+    margin: '5px 0',
+  });
+  commentElement.appendChild(commentBody);
+
+  // Add top reply if available
+  if (comment.replies && comment.replies[0] && level<maxLevel) {
+    comment.replies.slice(0, maxLevel - level).forEach(reply => {
+      const replyElement = createComment(reply, level + 1, maxLevel);
+      commentElement.appendChild(replyElement);
+    });
+  }
+
+  return commentElement;
+}
+
+function createButtonSettings() {
   // Add settings button
   const settingsButton = document.createElement('button');
   const settingsIcon = document.createElement('span');
   // Unicode for gear icon
   settingsIcon.innerHTML = '&#9881;'; 
-  settingsIcon.style.fontSize = '16px';
+  settingsIcon.style.fontSize = '12px';
   settingsIcon.style.display = 'inline-block';
   settingsIcon.style.verticalAlign = 'middle';
   settingsButton.appendChild(settingsIcon);
@@ -92,14 +156,14 @@ function createCommentsContainer(comments) {
   Object.assign(settingsButton.style, {
     position: 'absolute',
     top: '10px',
-    right: '10px',
+    right: '25px',
     color: '#FFFFFF',
     border: 'none',
     borderRadius: '4px',
-    padding: '2px 5px',
+    padding: '2px 4px',
     cursor: 'pointer',
     fontSize: '12px',
-  });
+  });  
 
   settingsButton.addEventListener('click', () => {
     const settingsModal = document.createElement('div');
@@ -169,69 +233,37 @@ function createCommentsContainer(comments) {
       }
     });   
   });
+  return settingsButton;
+}  
 
-  commentsContainer.appendChild(settingsButton);
+function createButtonClose() {
+  // Add close button
+  const closeButton = document.createElement('button');
+  const closeIcon = document.createElement('span');
+  // Unicode for gear icon
+  closeIcon.innerHTML = '&#10006;'; 
+  closeIcon.style.fontSize = '12px';
+  closeIcon.style.display = 'inline-block';
+  closeIcon.style.verticalAlign = 'middle';
+  closeButton.appendChild(closeIcon);
 
-  comments.forEach(comment => {
-    const commentElement = createComment(comment, 0, localStorage.getItem('reddit-comment-companion-maxLevel') || 1);
-    commentsContainer.appendChild(commentElement);
+  Object.assign(closeButton.style, {
+    position: 'absolute',
+    top: '10px',
+    right: '5px',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '2px 4px',
+    cursor: 'pointer',
+    fontSize: '12px',
   });
 
-  return commentsContainer;
+  closeButton.addEventListener('click', () => {
+    hideComments();
+  });
+  return closeButton;
 }
-
-function createComment(comment, level, maxLevel) {
-  const commentElement = document.createElement('div');
-  commentElement.classList.add(level>0 ? 'reply' : 'comment');
-  Object.assign(commentElement.style, level>0 ? {
-    marginLeft: `10px`,
-    padding: '5px 0',
-    borderLeft: '2px solid #343536',
-    paddingLeft: '10px',
-    fontSize: '13px'
-  } : {
-    padding: '10px 0',
-    fontSize: '14px',
-    borderBottom: '1px solid #343536',
-  });
-
-  // Add comment metadata (author, votes, and link)
-  const metadata = document.createElement('div');
-  metadata.innerHTML = `
-    <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
-      <strong>${comment.author}</strong>
-    </a> | 
-    ${comment.ups > 0 ? '+' : ''}${comment.ups} |
-    ${timeAgo(comment.created_utc)} |
-    <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
-      Comment
-    </a>
-  `;
-  Object.assign(metadata.style, {
-    marginBottom: '5px',
-    fontSize: level>0 ? '11px' : '12px',
-  });
-  commentElement.appendChild(metadata);
-
-  // Add comment body
-  const commentBody = document.createElement('p');
-  commentBody.textContent = comment.body;
-  Object.assign(commentBody.style, {
-    margin: '5px 0',
-  });
-  commentElement.appendChild(commentBody);
-
-  // Add top reply if available
-  if (comment.replies && comment.replies[0] && level<maxLevel) {
-    comment.replies.slice(0, maxLevel - level).forEach(reply => {
-      const replyElement = createComment(reply, level + 1, maxLevel);
-      commentElement.appendChild(replyElement);
-    });
-  }
-
-  return commentElement;
-}
-
 
 function timeAgo(timestamp) {
   const seconds = Math.floor((Date.now() - timestamp * 1000) / 1000);
