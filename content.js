@@ -1,4 +1,3 @@
-
 // On Hover for Reddit Comments //
 const commentButtons = document.querySelectorAll('a.comments');
 commentButtons.forEach(button => {
@@ -18,7 +17,10 @@ async function fetchComments(href) {
         reject(`Error fetching comments: ${response.statusText}`);
       }
       const data = await response.json();
-      const comments = data[1].data.children.map(child => child.data);
+      const comments = data[1].data.children.map(child => ({
+        ...child.data,
+        topReply: child.data.replies?.data?.children[0]?.data || null
+      }));
       resolve(comments);
     } catch (error) {
       reject(`Error: ${error.message}`);
@@ -100,6 +102,47 @@ function createCommentsContainer(comments) {
         margin: '5px 0',
       });
       commentElement.appendChild(commentBody);
+
+      // Add top reply
+      if (comment.topReply) {
+        const replyElement = document.createElement('div');
+        replyElement.classList.add('reply');
+        Object.assign(replyElement.style, {
+          'marginLeft': '20px',
+          'padding': '5px 0',
+          'borderLeft': '2px solid #343536',
+          'paddingLeft': '10px',
+          'fontSize': '13px'
+        });
+
+        // Add reply metadata
+        const replyMetadata = document.createElement('div');
+        replyMetadata.innerHTML = `
+          <a href="https://www.reddit.com/user/${comment.topReply.author}" target="_blank" style="color: #0079D3; text-decoration: none;">
+            <strong>${comment.topReply.author}</strong>
+          </a> | 
+          ${comment.topReply.ups > 0 ? '+' : ''}${comment.topReply.ups} |
+          ${timeAgo(comment.topReply.created_utc)} |
+          <a href="https://www.reddit.com${comment.topReply.permalink}" target="_blank" style="color: #0079D3; text-decoration: none;">
+            Comment
+          </a>
+        `;
+        Object.assign(replyMetadata.style, {
+          marginBottom: '3px',
+          fontSize: '11px'
+        });
+        replyElement.appendChild(replyMetadata);
+
+        // Add reply body
+        const replyBody = document.createElement('p');
+        replyBody.textContent = comment.topReply.body;
+        Object.assign(replyBody.style, {
+          margin: '3px 0'
+        });
+        replyElement.appendChild(replyBody);
+        
+        commentElement.appendChild(replyElement);
+      }
 
       commentsContainer.appendChild(commentElement);
   });
