@@ -107,9 +107,11 @@ function createComment(comment, level, maxLevel) {
   if (!comment.author) return commentElement
   commentElement.classList.add(level>0 ? 'reply' : 'comment');
   Object.assign(commentElement.style, level>0 ? {
-    marginLeft: '10px',
+    marginLeft: '5px',
     borderLeft: '2px solid #343536',
-    paddingLeft: '15px',
+    paddingLeft: '5px',
+    paddingBottom: '5px',
+    padding: '5px',
     fontSize: '13px'
   } : {
     padding: '6px 0',
@@ -121,16 +123,27 @@ function createComment(comment, level, maxLevel) {
   const metadata = document.createElement('div');
   metadata.style.color = 'rgb(166, 166, 166)';
 
+  author_color = 'inherit';
+  if (comment.distinguished === 'moderator') {
+    author_color = 'green';
+  } else if (comment.distinguished === 'admin') {
+    author_color = 'red';
+  } else if (comment.is_submitter) {
+    author_color = 'blue';
+  }
+
   metadata.innerHTML = `
     <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: inherit; text-decoration: none;">
-      <strong>${comment.author}</strong>
-    </a> | 
-    ${comment.ups > 0 ? '+' : ''}${comment.ups} |
+      <strong style="background: ${author_color}; color: ${author_color=='inherit' ? 'inherit' : 'white'}">${comment.author}</strong>
+    </a> |
+    ${comment.score_hidden ? '?' : (comment.score > 0 ? '+' : '') + comment.score} |
     ${timeAgo(comment.created_utc)} |
     <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: inherit; text-decoration: none;">
       Comment
     </a>
   `;
+
+  
   Object.assign(metadata.style, {
     marginBottom: '5px',
     fontSize: level>0 ? '11px' : '12px',
