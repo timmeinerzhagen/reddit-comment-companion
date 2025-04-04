@@ -5,7 +5,11 @@
   "description": "Show comments for a Reddit post on the overview page by hovering over the comment button.",
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "cookies"
+  ],
+  "host_permissions": [
+    "*://*.reddit.com/"
   ],
   "background": {
     "service_worker": "background.js"

@@ -11,30 +11,42 @@ commentButtons.forEach(button => {
 });
 
 async function fetchComments(href) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const sortOption = localStorage.getItem('reddit-comment-companion-sortOption') || 'top';
-      const response = await fetch(`${href}.json?sort=${sortOption}`);
-      if (!response.ok) {
-        reject(`Error fetching comments: ${response.statusText}`);
-      }
-      const data = await response.json();
-      function extractReplies(comment) {
-        if (!comment.replies || !comment.replies.data) return [];
-        return comment.replies.data.children.map(child => ({
-          ...child.data,
-          replies: extractReplies(child.data)
-        }));
-      }
-
-      const comments = data[1].data.children.map(child => ({
-        ...child.data,
-        replies: extractReplies(child.data)
-      }));
-      resolve(comments);
-    } catch (error) {
-      reject(`Error: ${error.message}`);
+  const sortOption = localStorage.getItem('reddit-comment-companion-sortOption') || 'top';
+  const token = await getRedditSessionToken();
+  const response = await fetch(`${href}.json?sort=${sortOption}`, {
+    headers: {
+      'Cookie': `reddit_session=${token}`,
+      'User-Agent': 'Reddit Comment Companion Chrome Extension v1.0'
     }
+  });
+  if (!response.ok) {
+    throw new Error(`Error fetching comments: ${response.statusText}`);
+  }
+  const data = await response.json();
+  function extractReplies(comment) {
+    if (!comment.replies || !comment.replies.data) return [];
+    return comment.replies.data.children.map(child => ({
+      ...child.data,
+      replies: extractReplies(child.data)
+    }));
+  }
+
+  const comments = data[1].data.children.map(child => ({
+    ...child.data,
+    replies: extractReplies(child.data)
+  }));
+  return comments
+}
+
+async function getRedditSessionToken() {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'GET_REDDIT_TOKEN' }, response => {
+      if (response.error) {
+        reject(new Error(response.error));
+      } else {
+        resolve(response.token);
+      }
+    });
   });
 }
 
@@ -108,6 +120,7 @@ function createComment(comment, level, maxLevel) {
   // Add comment metadata (author, votes, and link)
   const metadata = document.createElement('div');
   metadata.style.color = 'rgb(166, 166, 166)';
+
   metadata.innerHTML = `
     <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: inherit; text-decoration: none;">
       <strong>${comment.author}</strong>
