@@ -1,21 +1,39 @@
 // On Hover for Reddit Comments //
+
 const commentButtons = document.querySelectorAll('a.comments');
-commentButtons.forEach(button => {
-  button.addEventListener('mouseover', async () => {
-    const postId = button.getAttribute('data-post-id');
-    const href = button.getAttribute('href');
-    localStorage.setItem('reddit-comment-companion-post', href);
-    const comments = await fetchComments(href);
-    showComments(button, comments);
+getRedditSessionToken()
+  .then(token => localStorage.setItem('reddit-comment-companion-session', token));
+
+  function attachCommentHoverListeners() {
+  const commentButtons = document.querySelectorAll('a.comments');
+  commentButtons.forEach(button => {
+    button.addEventListener('mouseover', async () => {
+      const href = button.getAttribute('href');
+      if (localStorage.getItem('reddit-comment-companion-post') !== href) {
+        localStorage.setItem('reddit-comment-companion-post', href);
+        console.log(href);
+        const comments = await fetchComments(href);
+        showComments(button, comments);
+      }
+    });
   });
+}
+
+// Initial attachment of listeners
+attachCommentHoverListeners();
+// Observe for dynamically loaded comment buttons
+const observer = new MutationObserver(() => {
+  attachCommentHoverListeners();
 });
+observer.observe(document.body, { childList: true, subtree: true });
 
 async function fetchComments(href) {
   const sortOption = localStorage.getItem('reddit-comment-companion-sortOption') || 'top';
-  const token = await getRedditSessionToken();
+  console.log(localStorage.getItem('reddit-comment-companion-session'));
+  
   const response = await fetch(`${href}.json?sort=${sortOption}`, {
     headers: {
-      'Cookie': `reddit_session=${token}`,
+      'Cookie': `reddit_session=${localStorage.getItem('reddit-comment-companion-session')}`,
       'User-Agent': 'Reddit Comment Companion Chrome Extension v1.0'
     }
   });
