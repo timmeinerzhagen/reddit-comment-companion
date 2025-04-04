@@ -138,46 +138,23 @@ function createComment(comment, level, maxLevel) {
   commentElement.appendChild(metadata);
 
   // Add comment body
-  if (comment.body) {
-    const commentBody = document.createElement('div'); // Changed from 'p' to 'div'
-    commentBody.innerHTML = marked.parse(comment.body);
-    Object.assign(commentBody.style, {
-      margin: '5px 0',
-    });
-
-    // Add styles for markdown elements
-    const markdownStyles = {
-      'p': { margin: '0 0 10px 0' },
-      'code': { 
-        backgroundColor: '#2a2a2b',
-        padding: '2px 4px',
-        borderRadius: '3px',
-        fontSize: '85%'
-      },
-      'pre': { 
-        backgroundColor: '#2a2a2b',
-        padding: '10px',
-        borderRadius: '4px',
-        overflow: 'auto'
-      },
-      'blockquote': {
-        borderLeft: '3px solid #4a4a4b',
-        margin: '0',
-        paddingLeft: '10px',
-        color: '#a5a5a6'
-      },
-      'a': {
-        color: '#0079D3',
-        textDecoration: 'none'
+  if (comment.body_html) {
+    let body = document.createElement('div')
+    body.innerHTML = comment.body_html.trim().replace(/&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    // Replace links to images with actual images
+    const links = body.querySelectorAll('a');
+    links.forEach(link => {
+      const url = link.getAttribute('href');
+      if (url && /\.(jpeg|jpg|png|gif|webp)(\?.*)?$/i.test(url)) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.maxWidth = '100%';
+        img.style.borderRadius = '4px';
+        link.replaceWith(img);
       }
-    };
-
-    Object.entries(markdownStyles).forEach(([element, styles]) => {
-      const elements = commentBody.getElementsByTagName(element);
-      Array.from(elements).forEach(el => Object.assign(el.style, styles));
     });
-
-    commentElement.appendChild(commentBody);
+    
+    commentElement.append(body);
   }
 
   // Add top reply if available
