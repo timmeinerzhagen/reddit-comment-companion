@@ -109,8 +109,7 @@ function createCommentsContainer(comments, title) {
     right: '0',
     backgroundColor: '#1A1A1B',
     border: '1px solid #343536',
-    padding: '10px',
-    zIndex: '1000',
+    zIndex: '10000001',
     width: `${containerWidth}vw`,
     height: '100vh',
     borderRadius: '8px',
@@ -123,19 +122,30 @@ function createCommentsContainer(comments, title) {
   });
   
   const bar = document.createElement('div');
-  const postTitle = document.createElement('span');
-  postTitle.textContent = title;
   Object.assign(bar.style, {
     position: 'sticky',
     top: '0',
-    //backgroundColor: '#1A1A1B',
-    //color: '#D7DADC',
-    fontWeight: 'bold',
     padding: '10px',
+    backgroundColor: '#1A1A1B',
+    color: '#D7DADC',
+    height: '10px',
+    fontWeight: 'bold',
     borderBottom: '1px solid #343536',
     textAlign: 'center',
-    //zIndex: '1001',
   });
+  const postTitle = document.createElement('span');
+  postTitle.textContent = title;
+  postTitle.style.whiteSpace = 'nowrap';
+  postTitle.style.overflow = 'hidden';
+  postTitle.style.textOverflow = 'ellipsis';
+  postTitle.style.flexGrow = '1';
+  postTitle.style.textAlign = 'left';
+  postTitle.style.fontSize = '14px';
+  postTitle.style.fontWeight = 'bold';
+
+  bar.style.display = 'flex';
+  bar.style.alignItems = 'center';
+  bar.style.justifyContent = 'space-between';
   bar.appendChild(postTitle);
   bar.appendChild(createButtonReload());
   bar.appendChild(createButtonSettings());
@@ -155,7 +165,7 @@ function createComment(comment, level, maxLevel) {
   if (!comment.author) return commentElement
   commentElement.classList.add(level>0 ? 'reply' : 'comment');
   Object.assign(commentElement.style, level>0 ? {
-    marginLeft: '5px',
+    marginLeft: '10px',
     borderLeft: '2px solid #343536',
     paddingLeft: '5px',
     paddingBottom: '5px',
