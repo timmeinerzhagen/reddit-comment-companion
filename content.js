@@ -19,7 +19,7 @@ getRedditSessionToken()
             reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
             try {
               const post = await fetchPost(href);
-              const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+              const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
               commentsContainer.replaceWith(newCommentsContainer);
             } catch (error) {
               console.error('Error reloading comments:', error);
@@ -31,7 +31,7 @@ getRedditSessionToken()
         }
         const post = await fetchPost(href);
         hideComments();
-        const commentsContainerNew = createCommentsContainer(post.comments, post.title);
+        const commentsContainerNew = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
         document.body.appendChild(commentsContainerNew);
       }
     });
@@ -73,7 +73,10 @@ async function fetchPost(href) {
   }));
   return {
     comments,
-    title: data[0].data.children[0].data.title
+    post: {
+      title: data[0].data.children[0].data.title,
+      permalink: data[0].data.children[0].data.permalink,      
+    },
   }
 }
 
@@ -97,7 +100,7 @@ function hideComments() {
 }
 
 // Manage Comments Container //
-function createCommentsContainer(comments, title) {
+function createCommentsContainer(comments, title, permalink) {
   const commentsContainer = document.createElement('div');
   commentsContainer.classList.add('comments-container');
 
@@ -133,8 +136,11 @@ function createCommentsContainer(comments, title) {
     borderBottom: '1px solid #343536',
     textAlign: 'center',
   });
-  const postTitle = document.createElement('span');
+  const postTitle = document.createElement('a');
   postTitle.textContent = title;
+  postTitle.title = title; // Add tooltip with title name
+  postTitle.href = `https://www.reddit.com${permalink}`;
+  postTitle.target = '_blank'; // Open link in a new tab
   postTitle.style.whiteSpace = 'nowrap';
   postTitle.style.overflow = 'hidden';
   postTitle.style.textOverflow = 'ellipsis';
@@ -142,6 +148,8 @@ function createCommentsContainer(comments, title) {
   postTitle.style.textAlign = 'left';
   postTitle.style.fontSize = '14px';
   postTitle.style.fontWeight = 'bold';
+  postTitle.style.color = '#D7DADC';
+  postTitle.style.textDecoration = 'none';
 
   bar.style.display = 'flex';
   bar.style.alignItems = 'center';
@@ -256,7 +264,7 @@ function createButtonReload() {
       const href = localStorage.getItem('reddit-comment-companion-post');
       try {
         const post = await fetchPost(href);
-        const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+        const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
         commentsContainer.replaceWith(newCommentsContainer);
       } catch (error) {
         console.error('Error reloading comments:', error);
@@ -297,7 +305,7 @@ function createButtonReload() {
     if (commentsContainer) {
       const href = localStorage.getItem('reddit-comment-companion-post');
       fetchPost(href).then(post => {
-        const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+        const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
         commentsContainer.replaceWith(newCommentsContainer);
       }).catch(error => {
         console.error('Error reloading comments:', error);
@@ -390,12 +398,19 @@ function createButtonSettings() {
       const commentsContainer = document.querySelector('.comments-container');
       if (commentsContainer) {
         const href = localStorage.getItem('reddit-comment-companion-post');
-        fetchPost(href).then(post => {
-          const newCommentsContainer = createCommentsContainer(post.comments, post.title);
-          commentsContainer.replaceWith(newCommentsContainer);
-        }).catch(error => {
-          console.error('Error reloading comments:', error);
-        });
+        const reloadButton = commentsContainer.querySelector('button');
+        if (reloadButton) {
+          const reloadIcon = reloadButton.querySelector('span');
+          reloadIcon.style.animation = 'spin 1s linear infinite'; // Start spinning animation
+          fetchPost(href).then(post => {
+            const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
+            commentsContainer.replaceWith(newCommentsContainer);
+          }).catch(error => {
+            console.error('Error reloading comments:', error);
+          }).finally(() => {
+            reloadIcon.style.animation = ''; // Stop spinning animation
+          });
+        }
       }
     });   
   });
