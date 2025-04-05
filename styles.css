@@ -4,6 +4,7 @@
   right: 0;
   background-color: #1A1A1B;
   border: 1px solid #343536;
+  height: 100vh;
   z-index: 10000001;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
@@ -43,14 +44,14 @@
 
 .rcc-control-button {
   color: #FFFFFF;
-  border: none;
+  border: none!important;
   border-radius: 4px;
   padding: 2px 4px;
   cursor: pointer;
   font-size: 12px;
 }
 
-.rcc-button-icon {
+.rcc-button-reload-icon {
   font-size: 12px;
   display: inline-block;
   vertical-align: middle;
@@ -58,8 +59,14 @@
 
 .rcc-comment {
   padding: 6px 0;
+  margin: 0px 10px 0px 10px;
   font-size: 14px;
   border-bottom: 2px solid #343536;
+}
+
+.rcc-comment img {
+  max-width: 100%;
+  border-radius: 4px
 }
 
 .rcc-reply {
@@ -71,7 +78,12 @@
 
 .rcc-metadata {
   color: rgb(166, 166, 166);
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+}
+
+.rcc-metadata a {
+  color: inherit; 
+  text-decoration: none;
 }
 
 .rcc-settings-modal {
@@ -104,13 +116,4 @@
   border-radius: 4px;
   padding: 5px 10px;
   cursor: pointer;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

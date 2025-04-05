@@ -4,37 +4,32 @@ const commentButtons = document.querySelectorAll('a.comments');
 getRedditSessionToken()
   .then(token => localStorage.setItem('reddit-comment-companion-session', token));
 
-  function attachCommentHoverListeners() {
+function attachCommentHoverListeners() {
   const commentButtons = document.querySelectorAll('a.comments');
   commentButtons.forEach(button => {
     button.addEventListener('mouseover', async () => {
       const href = button.getAttribute('href');
       if (localStorage.getItem('reddit-comment-companion-post') !== href) {
         localStorage.setItem('reddit-comment-companion-post', href);
-        const commentsContainer = document.querySelector('.rcc-comments-container');
-        if (commentsContainer) {
-          const reloadButton = commentsContainer.querySelector('button');
-          if (reloadButton) {
-            const reloadIcon = reloadButton.querySelector('span');
-            reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
-            try {
-              const post = await fetchPost(href);
-              const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
-              commentsContainer.replaceWith(newCommentsContainer);
-            } catch (error) {
-              console.error('Error reloading comments:', error);
-            } finally {
-              reloadIcon.style.animation = ''; // Remove animation after loading
-            }
-            return;
-          }
-        }
-        const post = await fetchPost(href);
-        hideComments();
-        const commentsContainerNew = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
-        document.body.appendChild(commentsContainerNew);
+        createOrUpdateCommentsContainer(href);
       }
     });
+  });
+}
+
+function createOrUpdateCommentsContainer(comments, title, permalink) {
+  const reloadIcon = document.querySelector('.rcc-button-reload-icon');
+  if (reloadIcon) {
+    reloadIcon.style.animation = 'spin 1s linear infinite'; // Start spinning animation
+  }
+
+  createCommentsContainer(comments, title, permalink).then(container => {
+    let container_old = document.querySelector('.rcc-comments-container');
+    if(container_old) {
+      container_old.replaceWith(container);
+    } else {
+      document.body.appendChild(container);
+    }
   });
 }
 
@@ -73,10 +68,8 @@ async function fetchPost(href) {
   }));
   return {
     comments,
-    post: {
-      title: data[0].data.children[0].data.title,
-      permalink: data[0].data.children[0].data.permalink,      
-    },
+    title: data[0].data.children[0].data.title,
+    permalink: data[0].data.children[0].data.permalink,  
   }
 }
 
@@ -92,29 +85,23 @@ async function getRedditSessionToken() {
   });
 }
 
-function hideComments() {
-  const commentsContainer = document.querySelector('.rcc-comments-container');
-  if (commentsContainer) {
-    commentsContainer.remove();
-  }
-}
-
 // Manage Comments Container //
-function createCommentsContainer(comments, title, permalink) {
+async function createCommentsContainer(href) {
+  const post = await fetchPost(href);
+
   const commentsContainer = document.createElement('div');
   commentsContainer.classList.add('rcc-comments-container');
   
   const containerWidth = localStorage.getItem('reddit-comment-companion-containerWidth') || '20';
   commentsContainer.style.width = `${containerWidth}vw`;
-  commentsContainer.style.height = '100vh';
 
   const bar = document.createElement('div');
   bar.classList.add('rcc-top-bar');
 
   const postTitle = document.createElement('a');
-  postTitle.textContent = title;
-  postTitle.title = title;
-  postTitle.href = `https://www.reddit.com${permalink}`;
+  postTitle.textContent = post.title;
+  postTitle.title = post.title;
+  postTitle.href = `https://www.reddit.com${post.permalink}`;
   postTitle.target = '_blank';
   postTitle.classList.add('rcc-post-title');
   postTitle.style.color = '#D7DADC'; // otherwise RES will override it
@@ -125,7 +112,7 @@ function createCommentsContainer(comments, title, permalink) {
   bar.appendChild(createButtonClose());
   commentsContainer.appendChild(bar);
 
-  comments.forEach(comment => {
+  post.comments.forEach(comment => {
     const commentElement = createComment(comment, 0, localStorage.getItem('reddit-comment-companion-maxLevel') || 1);
     commentsContainer.appendChild(commentElement);
   });
@@ -153,19 +140,18 @@ function createComment(comment, level, maxLevel) {
   }
 
   metadata.innerHTML = `
-    <a href="https://www.reddit.com/user/${comment.author}" target="_blank" style="color: inherit; text-decoration: none;">
+    <a href="https://www.reddit.com/user/${comment.author}" target="_blank">
       <strong style="background: ${author_color}; color: ${author_color=='inherit' ? 'inherit' : 'white'}">${comment.author}</strong>
     </a> |
     ${comment.score_hidden ? '?' : (comment.score > 0 ? '+' : '') + comment.score} |
     ${timeAgo(comment.created_utc)} |
-    <a href="https://www.reddit.com${comment.permalink}" target="_blank" style="color: inherit; text-decoration: none;">
+    <a href="https://www.reddit.com${comment.permalink}" target="_blank">
       Comment
     </a>
   `;
 
   
   Object.assign(metadata.style, {
-    marginBottom: '5px',
     fontSize: level>0 ? '11px' : '12px',
   });
   commentElement.appendChild(metadata);
@@ -181,8 +167,6 @@ function createComment(comment, level, maxLevel) {
       if (url && /\.(jpeg|jpg|png|gif|webp)(\?.*)?$/i.test(url)) {
         const img = document.createElement('img');
         img.src = url;
-        img.style.maxWidth = '100%';
-        img.style.borderRadius = '4px';
         link.replaceWith(img);
       }
     });
@@ -206,64 +190,14 @@ function createButtonReload() {
   reloadButton.classList.add('rcc-control-button');
   
   const reloadIcon = document.createElement('span');
-  reloadIcon.classList.add('rcc-button-icon');
+  reloadIcon.classList.add('rcc-button-reload-icon');
   reloadIcon.innerHTML = '&#x21bb;';
 
   reloadButton.addEventListener('click', async () => {
-    reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
-    const commentsContainer = document.querySelector('.rcc-comments-container');
-    if (commentsContainer) {
-      const href = localStorage.getItem('reddit-comment-companion-post');
-      try {
-        const post = await fetchPost(href);
-        const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
-        commentsContainer.replaceWith(newCommentsContainer);
-      } catch (error) {
-        console.error('Error reloading comments:', error);
-      } finally {
-        reloadIcon.style.animation = ''; // Remove animation after loading
-      }
-    }
+    const href = localStorage.getItem('reddit-comment-companion-post');
+    createOrUpdateCommentsContainer(href);
   });
-
-  // Add CSS for spinning animation
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  `;
-  document.head.appendChild(style);
   reloadButton.appendChild(reloadIcon);
-
-  Object.assign(reloadButton.style, {
-    top: '10px',
-    right: '45px',
-    color: '#FFFFFF',
-    border: 'none',
-    borderRadius: '4px',
-    padding: '2px 4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  });
-
-  reloadButton.addEventListener('click', () => {
-    const commentsContainer = document.querySelector('.rcc-comments-container');
-    if (commentsContainer) {
-      const href = localStorage.getItem('reddit-comment-companion-post');
-      fetchPost(href).then(post => {
-        const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
-        commentsContainer.replaceWith(newCommentsContainer);
-      }).catch(error => {
-        console.error('Error reloading comments:', error);
-      });
-    }
-  });
 
   return reloadButton;
 }
@@ -271,40 +205,11 @@ function createButtonReload() {
 function createButtonSettings() {
   const settingsButton = document.createElement('button');
   settingsButton.classList.add('rcc-control-button');
-  
-  const settingsIcon = document.createElement('span');
-  settingsIcon.classList.add('rcc-button-icon');
-  settingsIcon.innerHTML = '&#9881;';
-
-  settingsButton.appendChild(settingsIcon);
-
-  Object.assign(settingsButton.style, {
-   // position: 'absolute',
-    top: '10px',
-    right: '25px',
-    color: '#FFFFFF',
-    border: 'none',
-    borderRadius: '4px',
-    padding: '2px 4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  });  
+  settingsButton.innerHTML = '&#9881;';
 
   settingsButton.addEventListener('click', () => {
     const settingsModal = document.createElement('div');
     settingsModal.classList.add('rcc-settings-modal');
-    Object.assign(settingsModal.style, {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      backgroundColor: '#1A1A1B',
-      color: '#D7DADC',
-      padding: '20px',
-      borderRadius: '8px',
-      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.5)',
-      zIndex: '1001',
-    });
 
     const sortOption = localStorage.getItem("reddit-comment-companion-sortOption") || "top";
     const maxLevel = localStorage.getItem("reddit-comment-companion-maxLevel") || 1;
@@ -346,53 +251,23 @@ function createButtonSettings() {
 
       settingsModal.remove();
 
-      // Reload comments container
-      const commentsContainer = document.querySelector('.rcc-comments-container');
-      if (commentsContainer) {
-        const href = localStorage.getItem('reddit-comment-companion-post');
-        const reloadButton = commentsContainer.querySelector('button');
-        if (reloadButton) {
-          const reloadIcon = reloadButton.querySelector('span');
-          reloadIcon.style.animation = 'spin 1s linear infinite'; // Start spinning animation
-          fetchPost(href).then(post => {
-            const newCommentsContainer = createCommentsContainer(post.comments, post.post.title, post.post.permalink);
-            commentsContainer.replaceWith(newCommentsContainer);
-          }).catch(error => {
-            console.error('Error reloading comments:', error);
-          }).finally(() => {
-            reloadIcon.style.animation = ''; // Stop spinning animation
-          });
-        }
-      }
+      const href = localStorage.getItem('reddit-comment-companion-post');
+      createOrUpdateCommentsContainer(href);
     });   
   });
   return settingsButton;
-}  
+}
 
 function createButtonClose() {
   const closeButton = document.createElement('button');
   closeButton.classList.add('rcc-control-button');
-  
-  const closeIcon = document.createElement('span');
-  closeIcon.classList.add('rcc-button-icon');
-  closeIcon.innerHTML = '&#10006;';
-
-  closeButton.appendChild(closeIcon);
-
-  Object.assign(closeButton.style, {
-  //  position: 'absolute',
-    top: '10px',
-    right: '5px',
-    color: '#FFFFFF',
-    border: 'none',
-    borderRadius: '4px',
-    padding: '2px 4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  });
+  closeButton.innerHTML = '&#10006;';
 
   closeButton.addEventListener('click', () => {
-    hideComments();
+    const commentsContainer = document.querySelector('.rcc-comments-container');
+    if (commentsContainer) {
+      commentsContainer.remove();
+    }
   });
   return closeButton;
 }
