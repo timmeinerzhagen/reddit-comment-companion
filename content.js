@@ -11,9 +11,28 @@ getRedditSessionToken()
       const href = button.getAttribute('href');
       if (localStorage.getItem('reddit-comment-companion-post') !== href) {
         localStorage.setItem('reddit-comment-companion-post', href);
-        console.log(href);
-        const comments = await fetchComments(href);
-        showComments(button, comments);
+        const commentsContainer = document.querySelector('.comments-container');
+        if (commentsContainer) {
+          const reloadButton = commentsContainer.querySelector('button');
+          if (reloadButton) {
+            const reloadIcon = reloadButton.querySelector('span');
+            reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
+            try {
+              const post = await fetchPost(href);
+              const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+              commentsContainer.replaceWith(newCommentsContainer);
+            } catch (error) {
+              console.error('Error reloading comments:', error);
+            } finally {
+              reloadIcon.style.animation = ''; // Remove animation after loading
+            }
+            return;
+          }
+        }
+        const post = await fetchPost(href);
+        hideComments();
+        const commentsContainerNew = createCommentsContainer(post.comments, post.title);
+        document.body.appendChild(commentsContainerNew);
       }
     });
   });
@@ -27,9 +46,8 @@ const observer = new MutationObserver(() => {
 });
 observer.observe(document.body, { childList: true, subtree: true });
 
-async function fetchComments(href) {
+async function fetchPost(href) {
   const sortOption = localStorage.getItem('reddit-comment-companion-sortOption') || 'top';
-  console.log(localStorage.getItem('reddit-comment-companion-session'));
   
   const response = await fetch(`${href}.json?sort=${sortOption}`, {
     headers: {
@@ -53,7 +71,10 @@ async function fetchComments(href) {
     ...child.data,
     replies: extractReplies(child.data)
   }));
-  return comments
+  return {
+    comments,
+    title: data[0].data.children[0].data.title
+  }
 }
 
 async function getRedditSessionToken() {
@@ -75,16 +96,8 @@ function hideComments() {
   }
 }
 
-function showComments(button, comments) {
-  hideComments();
-  const commentsContainer = createCommentsContainer(comments);
-  document.body.appendChild(commentsContainer);
-}
-
-
-
 // Manage Comments Container //
-function createCommentsContainer(comments) {
+function createCommentsContainer(comments, title) {
   const commentsContainer = document.createElement('div');
   commentsContainer.classList.add('comments-container');
 
@@ -109,8 +122,25 @@ function createCommentsContainer(comments) {
     msOverflowStyle: 'none', // For Internet Explorer and Edge
   });
   
-  commentsContainer.appendChild(createButtonSettings());
-  commentsContainer.appendChild(createButtonClose());
+  const bar = document.createElement('div');
+  const postTitle = document.createElement('span');
+  postTitle.textContent = title;
+  Object.assign(bar.style, {
+    position: 'sticky',
+    top: '0',
+    //backgroundColor: '#1A1A1B',
+    //color: '#D7DADC',
+    fontWeight: 'bold',
+    padding: '10px',
+    borderBottom: '1px solid #343536',
+    textAlign: 'center',
+    //zIndex: '1001',
+  });
+  bar.appendChild(postTitle);
+  bar.appendChild(createButtonReload());
+  bar.appendChild(createButtonSettings());
+  bar.appendChild(createButtonClose());
+  commentsContainer.appendChild(bar);
 
   comments.forEach(comment => {
     const commentElement = createComment(comment, 0, localStorage.getItem('reddit-comment-companion-maxLevel') || 1);
@@ -199,6 +229,75 @@ function createComment(comment, level, maxLevel) {
   return commentElement;
 }
 
+function createButtonReload() {
+  // Add reload button
+  const reloadButton = document.createElement('button');
+  const reloadIcon = document.createElement('span');
+  // Unicode for reload icon
+  reloadIcon.innerHTML = '&#x21bb;';
+  reloadIcon.style.fontSize = '12px';
+  reloadIcon.style.display = 'inline-block';
+  reloadIcon.style.verticalAlign = 'middle';
+
+  reloadButton.addEventListener('click', async () => {
+    reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
+    const commentsContainer = document.querySelector('.comments-container');
+    if (commentsContainer) {
+      const href = localStorage.getItem('reddit-comment-companion-post');
+      try {
+        const post = await fetchPost(href);
+        const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+        commentsContainer.replaceWith(newCommentsContainer);
+      } catch (error) {
+        console.error('Error reloading comments:', error);
+      } finally {
+        reloadIcon.style.animation = ''; // Remove animation after loading
+      }
+    }
+  });
+
+  // Add CSS for spinning animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  reloadButton.appendChild(reloadIcon);
+
+  Object.assign(reloadButton.style, {
+    top: '10px',
+    right: '45px',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '2px 4px',
+    cursor: 'pointer',
+    fontSize: '12px',
+  });
+
+  reloadButton.addEventListener('click', () => {
+    const commentsContainer = document.querySelector('.comments-container');
+    if (commentsContainer) {
+      const href = localStorage.getItem('reddit-comment-companion-post');
+      fetchPost(href).then(post => {
+        const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+        commentsContainer.replaceWith(newCommentsContainer);
+      }).catch(error => {
+        console.error('Error reloading comments:', error);
+      });
+    }
+  });
+
+  return reloadButton;
+}
+
 function createButtonSettings() {
   // Add settings button
   const settingsButton = document.createElement('button');
@@ -211,7 +310,7 @@ function createButtonSettings() {
   settingsButton.appendChild(settingsIcon);
 
   Object.assign(settingsButton.style, {
-    position: 'absolute',
+   // position: 'absolute',
     top: '10px',
     right: '25px',
     color: '#FFFFFF',
@@ -281,9 +380,9 @@ function createButtonSettings() {
       const commentsContainer = document.querySelector('.comments-container');
       if (commentsContainer) {
         const href = localStorage.getItem('reddit-comment-companion-post');
-        fetchComments(href).then(comments => {
-        const newCommentsContainer = createCommentsContainer(comments);
-        commentsContainer.replaceWith(newCommentsContainer);
+        fetchPost(href).then(post => {
+          const newCommentsContainer = createCommentsContainer(post.comments, post.title);
+          commentsContainer.replaceWith(newCommentsContainer);
         }).catch(error => {
           console.error('Error reloading comments:', error);
         });
@@ -305,7 +404,7 @@ function createButtonClose() {
   closeButton.appendChild(closeIcon);
 
   Object.assign(closeButton.style, {
-    position: 'absolute',
+  //  position: 'absolute',
     top: '10px',
     right: '5px',
     color: '#FFFFFF',
