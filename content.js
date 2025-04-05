@@ -11,7 +11,7 @@ getRedditSessionToken()
       const href = button.getAttribute('href');
       if (localStorage.getItem('reddit-comment-companion-post') !== href) {
         localStorage.setItem('reddit-comment-companion-post', href);
-        const commentsContainer = document.querySelector('.comments-container');
+        const commentsContainer = document.querySelector('.rcc-comments-container');
         if (commentsContainer) {
           const reloadButton = commentsContainer.querySelector('button');
           if (reloadButton) {
@@ -93,7 +93,7 @@ async function getRedditSessionToken() {
 }
 
 function hideComments() {
-  const commentsContainer = document.querySelector('.comments-container');
+  const commentsContainer = document.querySelector('.rcc-comments-container');
   if (commentsContainer) {
     commentsContainer.remove();
   }
@@ -102,21 +102,21 @@ function hideComments() {
 // Manage Comments Container //
 function createCommentsContainer(comments, title, permalink) {
   const commentsContainer = document.createElement('div');
-  commentsContainer.classList.add('comments-container');
+  commentsContainer.classList.add('rcc-comments-container');
   
   const containerWidth = localStorage.getItem('reddit-comment-companion-containerWidth') || '20';
   commentsContainer.style.width = `${containerWidth}vw`;
   commentsContainer.style.height = '100vh';
 
   const bar = document.createElement('div');
-  bar.classList.add('top-bar');
+  bar.classList.add('rcc-top-bar');
 
   const postTitle = document.createElement('a');
   postTitle.textContent = title;
   postTitle.title = title;
   postTitle.href = `https://www.reddit.com${permalink}`;
   postTitle.target = '_blank';
-  postTitle.classList.add('post-title');
+  postTitle.classList.add('rcc-post-title');
   postTitle.style.color = '#D7DADC'; // otherwise RES will override it
 
   bar.appendChild(postTitle);
@@ -137,10 +137,10 @@ function createComment(comment, level, maxLevel) {
   const commentElement = document.createElement('div');
   if (!comment.author) return commentElement;
   
-  commentElement.classList.add(level > 0 ? 'reply' : 'comment');
+  commentElement.classList.add(level > 0 ? 'rcc-reply' : 'rcc-comment');
 
   const metadata = document.createElement('div');
-  metadata.classList.add('metadata');
+  metadata.classList.add('rcc-metadata');
   metadata.style.fontSize = level > 0 ? '11px' : '12px';
 
   author_color = 'inherit';
@@ -203,15 +203,15 @@ function createComment(comment, level, maxLevel) {
 
 function createButtonReload() {
   const reloadButton = document.createElement('button');
-  reloadButton.classList.add('control-button');
+  reloadButton.classList.add('rcc-control-button');
   
   const reloadIcon = document.createElement('span');
-  reloadIcon.classList.add('button-icon');
+  reloadIcon.classList.add('rcc-button-icon');
   reloadIcon.innerHTML = '&#x21bb;';
 
   reloadButton.addEventListener('click', async () => {
     reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
-    const commentsContainer = document.querySelector('.comments-container');
+    const commentsContainer = document.querySelector('.rcc-comments-container');
     if (commentsContainer) {
       const href = localStorage.getItem('reddit-comment-companion-post');
       try {
@@ -253,7 +253,7 @@ function createButtonReload() {
   });
 
   reloadButton.addEventListener('click', () => {
-    const commentsContainer = document.querySelector('.comments-container');
+    const commentsContainer = document.querySelector('.rcc-comments-container');
     if (commentsContainer) {
       const href = localStorage.getItem('reddit-comment-companion-post');
       fetchPost(href).then(post => {
@@ -270,10 +270,10 @@ function createButtonReload() {
 
 function createButtonSettings() {
   const settingsButton = document.createElement('button');
-  settingsButton.classList.add('control-button');
+  settingsButton.classList.add('rcc-control-button');
   
   const settingsIcon = document.createElement('span');
-  settingsIcon.classList.add('button-icon');
+  settingsIcon.classList.add('rcc-button-icon');
   settingsIcon.innerHTML = '&#9881;';
 
   settingsButton.appendChild(settingsIcon);
@@ -292,6 +292,7 @@ function createButtonSettings() {
 
   settingsButton.addEventListener('click', () => {
     const settingsModal = document.createElement('div');
+    settingsModal.classList.add('rcc-settings-modal');
     Object.assign(settingsModal.style, {
       position: 'fixed',
       top: '50%',
@@ -346,7 +347,7 @@ function createButtonSettings() {
       settingsModal.remove();
 
       // Reload comments container
-      const commentsContainer = document.querySelector('.comments-container');
+      const commentsContainer = document.querySelector('.rcc-comments-container');
       if (commentsContainer) {
         const href = localStorage.getItem('reddit-comment-companion-post');
         const reloadButton = commentsContainer.querySelector('button');
@@ -370,10 +371,10 @@ function createButtonSettings() {
 
 function createButtonClose() {
   const closeButton = document.createElement('button');
-  closeButton.classList.add('control-button');
+  closeButton.classList.add('rcc-control-button');
   
   const closeIcon = document.createElement('span');
-  closeIcon.classList.add('button-icon');
+  closeIcon.classList.add('rcc-button-icon');
   closeIcon.innerHTML = '&#10006;';
 
   closeButton.appendChild(closeIcon);

@@ -1,4 +1,4 @@
-.comments-container {
+.rcc-comments-container {
   position: fixed;
   top: 0;
   right: 0;
@@ -14,7 +14,7 @@
   -ms-overflow-style: none;
 }
 
-.top-bar {
+.rcc-top-bar {
   position: sticky;
   top: 0;
   padding: 10px;
@@ -29,7 +29,7 @@
   justify-content: space-between;
 }
 
-.post-title {
+.rcc-post-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -41,7 +41,7 @@
   text-decoration: none;
 }
 
-.control-button {
+.rcc-control-button {
   color: #FFFFFF;
   border: none;
   border-radius: 4px;
@@ -50,31 +50,31 @@
   font-size: 12px;
 }
 
-.button-icon {
+.rcc-button-icon {
   font-size: 12px;
   display: inline-block;
   vertical-align: middle;
 }
 
-.comment {
+.rcc-comment {
   padding: 6px 0;
   font-size: 14px;
   border-bottom: 2px solid #343536;
 }
 
-.reply {
+.rcc-reply {
   margin-left: 10px;
   border-left: 2px solid #343536;
   padding: 5px;
   font-size: 13px;
 }
 
-.metadata {
+.rcc-metadata {
   color: rgb(166, 166, 166);
   margin-bottom: 5px;
 }
 
-.settings-modal {
+.rcc-settings-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -87,7 +87,7 @@
   z-index: 1001;
 }
 
-.settings-input {
+.rcc-settings-input {
   margin-left: 10px;
   padding: 5px;
   border-radius: 4px;
@@ -96,7 +96,7 @@
   color: #D7DADC;
 }
 
-.settings-button {
+.rcc-settings-button {
   margin-top: 10px;
   background-color: #0079D3;
   color: #FFFFFF;
