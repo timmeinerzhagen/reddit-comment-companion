@@ -182,7 +182,7 @@ function createComment(comment, level, maxLevel) {
   } : {
     padding: '6px 0',
     fontSize: '14px',
-    borderBottom: '1px solid #343536',
+    borderBottom: '2px solid #343536',
   });
 
   // Add comment metadata (author, votes, and link)
