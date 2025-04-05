@@ -103,57 +103,22 @@ function hideComments() {
 function createCommentsContainer(comments, title, permalink) {
   const commentsContainer = document.createElement('div');
   commentsContainer.classList.add('comments-container');
-
-  const containerWidth = localStorage.getItem('reddit-comment-companion-containerWidth') || '20';
-
-  Object.assign(commentsContainer.style, {
-    position: 'fixed',
-    top: '0',
-    right: '0',
-    backgroundColor: '#1A1A1B',
-    border: '1px solid #343536',
-    zIndex: '10000001',
-    width: `${containerWidth}vw`,
-    height: '100vh',
-    borderRadius: '8px',
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.5)',
-    color: '#D7DADC',
-    fontFamily: 'Arial, sans-serif',
-    overflow: 'auto',
-    scrollbarWidth: 'none', // For Firefox
-    msOverflowStyle: 'none', // For Internet Explorer and Edge
-  });
   
+  const containerWidth = localStorage.getItem('reddit-comment-companion-containerWidth') || '20';
+  commentsContainer.style.width = `${containerWidth}vw`;
+  commentsContainer.style.height = '100vh';
+
   const bar = document.createElement('div');
-  Object.assign(bar.style, {
-    position: 'sticky',
-    top: '0',
-    padding: '10px',
-    backgroundColor: '#1A1A1B',
-    color: '#D7DADC',
-    height: '10px',
-    fontWeight: 'bold',
-    borderBottom: '1px solid #343536',
-    textAlign: 'center',
-  });
+  bar.classList.add('top-bar');
+
   const postTitle = document.createElement('a');
   postTitle.textContent = title;
-  postTitle.title = title; // Add tooltip with title name
+  postTitle.title = title;
   postTitle.href = `https://www.reddit.com${permalink}`;
-  postTitle.target = '_blank'; // Open link in a new tab
-  postTitle.style.whiteSpace = 'nowrap';
-  postTitle.style.overflow = 'hidden';
-  postTitle.style.textOverflow = 'ellipsis';
-  postTitle.style.flexGrow = '1';
-  postTitle.style.textAlign = 'left';
-  postTitle.style.fontSize = '14px';
-  postTitle.style.fontWeight = 'bold';
-  postTitle.style.color = '#D7DADC';
-  postTitle.style.textDecoration = 'none';
+  postTitle.target = '_blank';
+  postTitle.classList.add('post-title');
+  postTitle.style.color = '#D7DADC'; // otherwise RES will override it
 
-  bar.style.display = 'flex';
-  bar.style.alignItems = 'center';
-  bar.style.justifyContent = 'space-between';
   bar.appendChild(postTitle);
   bar.appendChild(createButtonReload());
   bar.appendChild(createButtonSettings());
@@ -170,24 +135,13 @@ function createCommentsContainer(comments, title, permalink) {
 
 function createComment(comment, level, maxLevel) {
   const commentElement = document.createElement('div');
-  if (!comment.author) return commentElement
-  commentElement.classList.add(level>0 ? 'reply' : 'comment');
-  Object.assign(commentElement.style, level>0 ? {
-    marginLeft: '10px',
-    borderLeft: '2px solid #343536',
-    paddingLeft: '5px',
-    paddingBottom: '5px',
-    padding: '5px',
-    fontSize: '13px'
-  } : {
-    padding: '6px 0',
-    fontSize: '14px',
-    borderBottom: '2px solid #343536',
-  });
+  if (!comment.author) return commentElement;
+  
+  commentElement.classList.add(level > 0 ? 'reply' : 'comment');
 
-  // Add comment metadata (author, votes, and link)
   const metadata = document.createElement('div');
-  metadata.style.color = 'rgb(166, 166, 166)';
+  metadata.classList.add('metadata');
+  metadata.style.fontSize = level > 0 ? '11px' : '12px';
 
   author_color = 'inherit';
   if (comment.distinguished === 'moderator') {
@@ -248,14 +202,12 @@ function createComment(comment, level, maxLevel) {
 }
 
 function createButtonReload() {
-  // Add reload button
   const reloadButton = document.createElement('button');
+  reloadButton.classList.add('control-button');
+  
   const reloadIcon = document.createElement('span');
-  // Unicode for reload icon
+  reloadIcon.classList.add('button-icon');
   reloadIcon.innerHTML = '&#x21bb;';
-  reloadIcon.style.fontSize = '12px';
-  reloadIcon.style.display = 'inline-block';
-  reloadIcon.style.verticalAlign = 'middle';
 
   reloadButton.addEventListener('click', async () => {
     reloadIcon.style.animation = 'spin 1s linear infinite'; // Add spinning animation
@@ -317,14 +269,13 @@ function createButtonReload() {
 }
 
 function createButtonSettings() {
-  // Add settings button
   const settingsButton = document.createElement('button');
+  settingsButton.classList.add('control-button');
+  
   const settingsIcon = document.createElement('span');
-  // Unicode for gear icon
-  settingsIcon.innerHTML = '&#9881;'; 
-  settingsIcon.style.fontSize = '12px';
-  settingsIcon.style.display = 'inline-block';
-  settingsIcon.style.verticalAlign = 'middle';
+  settingsIcon.classList.add('button-icon');
+  settingsIcon.innerHTML = '&#9881;';
+
   settingsButton.appendChild(settingsIcon);
 
   Object.assign(settingsButton.style, {
@@ -418,14 +369,13 @@ function createButtonSettings() {
 }  
 
 function createButtonClose() {
-  // Add close button
   const closeButton = document.createElement('button');
+  closeButton.classList.add('control-button');
+  
   const closeIcon = document.createElement('span');
-  // Unicode for gear icon
-  closeIcon.innerHTML = '&#10006;'; 
-  closeIcon.style.fontSize = '12px';
-  closeIcon.style.display = 'inline-block';
-  closeIcon.style.verticalAlign = 'middle';
+  closeIcon.classList.add('button-icon');
+  closeIcon.innerHTML = '&#10006;';
+
   closeButton.appendChild(closeIcon);
 
   Object.assign(closeButton.style, {

@@ -17,6 +17,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.reddit.com/*"],
+      "css": ["styles.css"],
       "js": ["content.js"]
     }
   ],
