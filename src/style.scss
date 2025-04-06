@@ -165,3 +165,12 @@ p  {
   margin: 0;
   padding: 0;
 }
+
+a {
+  color: #0079D3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
