@@ -53,12 +53,31 @@
   cursor: pointer;
   font-size: 12px;
   background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 .rcc-button-reload-icon {
   font-size: 12px;
   display: inline-block;
   vertical-align: middle;
+}
+
+.rcc-button-icon {
+  line-height: 1;
+}
+
+/* Controls */
+.rcc-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1px;
+  margin-left: 2px;
+  white-space: nowrap;
 }
 
 /* Comments */

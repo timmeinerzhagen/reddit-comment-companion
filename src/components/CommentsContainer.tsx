@@ -15,8 +15,10 @@ export default function CommentsContainer({ href, onClose }: CommentsContainerPr
 
   useEffect(() => {
     const loadPost = async () => {
-      const data = await fetchPost(href)
-      setPost(data)
+      if(href) {
+        const data = await fetchPost(href)
+        setPost(data)
+      }       
     }
     loadPost()
   }, [href])

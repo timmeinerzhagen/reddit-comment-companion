@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { PlasmoCSConfig } from "plasmo"
 import CommentsContainer from './components/CommentsContainer'
 import { getRedditSessionToken } from './utils/reddit'
@@ -18,6 +18,8 @@ export const getStyle: PlasmoGetStyle = () => {
 }
 
 const PlasmoOverlay = () => {
+  const [href, setHref] = useState<string>('')
+
   useEffect(() => {
     // Initialize session token
     getRedditSessionToken()
@@ -27,10 +29,9 @@ const PlasmoOverlay = () => {
     const attachCommentHoverListeners = () => {
       document.querySelectorAll('a.comments').forEach(button => {
         button.addEventListener('mouseover', () => {
-          const href = button.getAttribute('href')
-          if (localStorage.getItem('reddit-comment-companion-post') !== href) {
-            localStorage.setItem('reddit-comment-companion-post', href)
-            // Update state to show comments
+          const hrefPost = button.getAttribute('href')
+          if (href !== hrefPost) {
+            setHref(hrefPost)
           }
         })
       })
@@ -47,7 +48,7 @@ const PlasmoOverlay = () => {
 
   return (
     <div>
-      <CommentsContainer href={localStorage.getItem('reddit-comment-companion-post')} />
+      <CommentsContainer href={href} />
     </div>
   )
 }

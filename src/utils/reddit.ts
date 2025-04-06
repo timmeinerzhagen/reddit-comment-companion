@@ -32,7 +32,6 @@ export async function getRedditSessionToken(): Promise<string> {
 
 export async function fetchPost(href: string): Promise<RedditPost> {
   const sortOption = localStorage.getItem('reddit-comment-companion-sortOption') || 'top'
-  
   const response = await fetch(`${href}.json?sort=${sortOption}`, {
     headers: {
       'Cookie': `reddit_session=${localStorage.getItem('reddit-comment-companion-session')}`,
