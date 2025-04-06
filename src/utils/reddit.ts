@@ -1,4 +1,5 @@
-interface RedditComment {
+export interface RedditComment {
+  id: string
   author: string
   score: number
   score_hidden: boolean

@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { fetchPost } from '../utils/reddit'
 import Comment from './Comment'
 import SettingsModal from './SettingsModal'
 
 interface CommentsContainerProps {
   href: string
-  onClose: () => void
 }
-
-export default function CommentsContainer({ href, onClose }: CommentsContainerProps) {
+export default function CommentsContainer({ href }: CommentsContainerProps) {
   const [post, setPost] = useState(null)
   const [showSettings, setShowSettings] = useState(false)
+  const [showContainer, setShowContainer] = useState(true)
   const [sortOption, setSortOption] = useState(
     localStorage.getItem('reddit-comment-companion-sortOption') || 'top'    
   )
@@ -19,13 +18,22 @@ export default function CommentsContainer({ href, onClose }: CommentsContainerPr
   )
   const [containerWidth, setContainerWidth] = useState(
     parseInt(localStorage.getItem('reddit-comment-companion-containerWidth') || '20')
-  ) 
-  useEffect(() => {
-    if(href){
-      fetchPost(href, sortOption).then(data => {
-        setPost(data)
-      })
+  )
+  const scrollRef = useRef(null);
+
+
+  const loadPost = async () => {
+    if(href) {
+      const postData = await fetchPost(href, sortOption)
+      setPost(postData)
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+      }
     }
+  }
+
+  useEffect(() => {
+    loadPost()
   }, [href, sortOption])
 
   if (!post) {
@@ -33,7 +41,7 @@ export default function CommentsContainer({ href, onClose }: CommentsContainerPr
   }
 
   return (
-    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw` }}>
+    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none' }} ref={scrollRef}>
       <div className="rcc-top-bar">
         <a 
           href={`https://www.reddit.com${post.permalink}`}
@@ -50,7 +58,7 @@ export default function CommentsContainer({ href, onClose }: CommentsContainerPr
           <button className="rcc-control-button" onClick={() => setShowSettings(true)}>
             <span className="rcc-button-icon">⚙</span>
           </button>
-          <button className="rcc-control-button" onClick={onClose}>
+          <button className="rcc-control-button" onClick={() => setShowContainer(false)}>
             <span className="rcc-button-icon">✖</span>
           </button>
         </div>
