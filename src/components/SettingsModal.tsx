@@ -4,16 +4,22 @@ interface SettingsModalProps {
   onClose: () => void
 }
 
-export default function SettingsModal({ onClose }: SettingsModalProps) {
-  const [sortOption, setSortOption] = useState(
-    localStorage.getItem('reddit-comment-companion-sortOption') || 'top'
-  )
-  const [maxLevel, setMaxLevel] = useState(
-    parseInt(localStorage.getItem('reddit-comment-companion-maxLevel') || '1')
-  )
-  const [containerWidth, setContainerWidth] = useState(
-    parseInt(localStorage.getItem('reddit-comment-companion-containerWidth') || '20')
-  )
+export default function SettingsModal({ 
+  onClose, 
+  maxLevel, 
+  setMaxLevel, 
+  sortOption, 
+  setSortOption, 
+  containerWidth, 
+  setContainerWidth 
+}: SettingsModalProps & {
+  maxLevel: number,
+  setMaxLevel: React.Dispatch<React.SetStateAction<number>>,
+  sortOption: string,
+  setSortOption: React.Dispatch<React.SetStateAction<string>>,
+  containerWidth: number,
+  setContainerWidth: React.Dispatch<React.SetStateAction<number>>
+}) {
 
   const handleSave = () => {
     localStorage.setItem('reddit-comment-companion-sortOption', sortOption)
@@ -53,7 +59,7 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
           type="number"
           value={maxLevel}
           onChange={(e) => setMaxLevel(parseInt(e.target.value))}
-          min={1}
+          min={0}
           style={{
             marginLeft: '10px',
             padding: '5px',

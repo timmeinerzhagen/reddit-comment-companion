@@ -11,17 +11,22 @@ interface CommentsContainerProps {
 export default function CommentsContainer({ href, onClose }: CommentsContainerProps) {
   const [post, setPost] = useState(null)
   const [showSettings, setShowSettings] = useState(false)
-  const containerWidth = localStorage.getItem('reddit-comment-companion-containerWidth') || '20'
-
+  const [sortOption, setSortOption] = useState(
+    localStorage.getItem('reddit-comment-companion-sortOption') || 'top'    
+  )
+  const [maxLevel, setMaxLevel] = useState(
+    parseInt(localStorage.getItem('reddit-comment-companion-maxLevel') || '1')
+  )
+  const [containerWidth, setContainerWidth] = useState(
+    parseInt(localStorage.getItem('reddit-comment-companion-containerWidth') || '20')
+  ) 
   useEffect(() => {
-    const loadPost = async () => {
-      if(href) {
-        const data = await fetchPost(href)
+    if(href){
+      fetchPost(href, sortOption).then(data => {
         setPost(data)
-      }       
+      })
     }
-    loadPost()
-  }, [href])
+  }, [href, sortOption])
 
   if (!post) {
     return <div>Loading</div>
@@ -50,14 +55,22 @@ export default function CommentsContainer({ href, onClose }: CommentsContainerPr
           </button>
         </div>
       </div>
-      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+      {showSettings && 
+        <SettingsModal 
+          maxLevel={maxLevel}
+          setMaxLevel={setMaxLevel}
+          sortOption={sortOption}
+          setSortOption={setSortOption}
+          containerWidth={containerWidth}
+          setContainerWidth={setContainerWidth}
+          onClose={() => {setShowSettings(false);  }} />}
       <div className="rcc-comments-list">
         {post.comments.map((comment) => (
           <Comment 
             key={comment.id}
             comment={comment}
             level={0}
-            maxLevel={parseInt(localStorage.getItem('reddit-comment-companion-maxLevel') || '1')} 
+            maxLevel={maxLevel} 
           />
         ))}
       </div>
