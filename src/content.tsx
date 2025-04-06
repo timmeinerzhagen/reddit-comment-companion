@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { PlasmoCSConfig } from "plasmo"
 import CommentsContainer from './components/CommentsContainer'
-import { getRedditSessionToken } from './utils/reddit'
 
 import styleText from "data-text:./style.scss"
 import type { PlasmoGetStyle } from "plasmo"
 
 export const config: PlasmoCSConfig = {
-  matches: ["*://*.reddit.com/*"],
-  all_frames: true
+  matches: ["*://*.reddit.com/*"]
 }
  
 export const getStyle: PlasmoGetStyle = () => {
