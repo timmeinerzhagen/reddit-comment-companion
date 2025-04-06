@@ -69,10 +69,7 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
         >
-          Comment
-          <span style={{ display: 'inline-block', transform: 'rotate(0deg)' }}>
           ➜
-          </span>
         </a>
       </div>
 
