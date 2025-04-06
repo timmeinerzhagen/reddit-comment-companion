@@ -1,3 +1,4 @@
+
 export interface RedditComment {
   id: string
   author: string
@@ -11,7 +12,7 @@ export interface RedditComment {
   replies: RedditComment[]
 }
 
-interface RedditPost {
+export interface RedditPost {
   title: string
   permalink: string
   comments: RedditComment[]

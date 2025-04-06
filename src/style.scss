@@ -161,6 +161,28 @@
   animation: spin 1s linear infinite;
 }
 
+.rcc-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  height: 100%;
+}
+
+.rcc-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #343536;
+  border-top: 3px solid #D7DADC;
+  border-radius: 50%;
+  animation: rcc-spin 1s linear infinite;
+}
+
+@keyframes rcc-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 p  {
   margin: 0;
   padding: 0;

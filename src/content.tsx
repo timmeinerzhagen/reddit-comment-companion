@@ -17,6 +17,7 @@ export const getStyle: PlasmoGetStyle = () => {
 
 const PlasmoOverlay = () => {
   const [href, setHref] = useState<string>('')
+  const [title, setTitle] = useState<string>('')
 
   useEffect(() => {
     // Attach comment hover listeners
@@ -26,6 +27,7 @@ const PlasmoOverlay = () => {
           const hrefPost = button.getAttribute('href')
           if (href !== hrefPost) {
             setHref(hrefPost)
+            setTitle(button.parentNode.parentNode.parentNode.querySelector(".title a").textContent)
           }
         })
       })
@@ -41,7 +43,7 @@ const PlasmoOverlay = () => {
 
   return (
     <div>
-      <CommentsContainer href={href} />
+      <CommentsContainer href={href} title={title}/>
     </div>
   )
 }
