@@ -71,7 +71,7 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
         >
           Comment
           <span style={{ display: 'inline-block', transform: 'rotate(0deg)' }}>
-            ➡️
+          ➜
           </span>
         </a>
       </div>
