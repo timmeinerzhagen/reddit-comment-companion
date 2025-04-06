@@ -21,10 +21,6 @@ const PlasmoOverlay = () => {
   const [href, setHref] = useState<string>('')
 
   useEffect(() => {
-    // Initialize session token
-    getRedditSessionToken()
-      .then(token => localStorage.setItem('reddit-comment-companion-session', token))
-
     // Attach comment hover listeners
     const attachCommentHoverListeners = () => {
       document.querySelectorAll('a.comments').forEach(button => {
@@ -36,7 +32,6 @@ const PlasmoOverlay = () => {
         })
       })
     }
-
     attachCommentHoverListeners()
 
     // Observer for dynamic content

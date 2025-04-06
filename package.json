@@ -24,8 +24,14 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "manifest_version": 3,
+    "permissions": [
+      "activeTab",
+      "storage",
+      "cookies"
+    ],
     "host_permissions": [
-      "https://*/*"
+      "*://*.reddit.com/"
     ]
   }
 }
