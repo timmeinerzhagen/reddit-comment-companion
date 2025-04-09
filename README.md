@@ -1,33 +1,47 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Reddit Comment Companion
 
-## Getting Started
+A browser extension that helps you navigate and interact with Reddit comments more efficiently.
 
-First, run the development server:
+> ![Reddit Comment Companion Example](./docs/example.png)
+
+## Features
+
+- Shows Reddit comments in a sidebar instead of having to open new tab
+- Supports full markdown, images, gifs
+- Collapsing comments
+
+## Install
+
+### From Source
+
+1. Clone this repository
+2. Install dependencies with `pnpm install`
+3. Build the extension with `pnpm build`
+4. Load the unpacked extension in your browser:
+   - Chrome: Go to `chrome://extensions/`, enable Developer mode, and click "Load unpacked"
+   - Firefox: Go to `about:debugging#/runtime/this-firefox` and click "Load Temporary Add-on"
+
+## Development
+
+This project uses:
+- [Plasmo](https://www.plasmo.com/) for browser extension development
+- React for the user interface
+- TypeScript for type safety
+- SCSS for styling
+
+### Commands
 
 ```bash
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
-# or
-npm run dev
-```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
-
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
-
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
-
-## Making production build
-
-Run the following:
-
-```bash
+# Build for production
 pnpm build
-# or
-npm run build
 ```
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
+## Contributing
 
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+Contributions are welcome! Feel free to open issues or submit pull requests to help improve this extension.
