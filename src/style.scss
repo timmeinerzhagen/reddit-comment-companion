@@ -38,7 +38,7 @@
   text-overflow: ellipsis;
   flex-grow: 1;
   text-align: left;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   color: #D7DADC;
   text-decoration: none;
@@ -84,8 +84,11 @@
 .rcc-comment {
   padding: 6px 2px;
   margin: 2px 10px;
-  font-size: 14px;
   border-bottom: 2px solid #525456;
+}
+
+.rcc-comment p {
+  font-size: 16px;
 }
 
 .rcc-comment img {
@@ -98,12 +101,21 @@
   border-top: 2px solid #343536;
   border-left: 2px solid #343536;
   padding: 5px;
-  font-size: 13px;
+  font-size: 16px;
+}
+
+.rcc-reply p {
+  font-size: 16px;
 }
 
 .rcc-metadata {
+  display: 'inline';
+  width: '100%';
   color: rgb(166, 166, 166);
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: 'hidden';
+  text-overflow: 'ellipsis';
 }
 
 .rcc-metadata a {

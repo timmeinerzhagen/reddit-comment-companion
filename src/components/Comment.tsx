@@ -1,5 +1,6 @@
 import { timeAgo } from '../utils/time'
 import type { RedditComment } from '../utils/reddit'
+import { useState } from 'react'
 
 interface CommentProps {
   comment: RedditComment
@@ -12,6 +13,8 @@ const decodeHtml = (html: string): string => {
 }
 
 export default function Comment({ comment, level, maxLevel }: CommentProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  
   if (!comment.author) return null
 
   let authorColor = 'inherit'
@@ -42,12 +45,17 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
     <div className={level > 0 ? 'rcc-reply' : 'rcc-comment'}>
       <div 
         className="rcc-metadata"
-        style={{ fontSize: level > 0 ? '11px' : '12px' }}
+        style={{ 
+          fontSize: level > 0 ? '11px' : '12px',
+          cursor: 'row-resize',
+        }}
+        onClick={() => setIsCollapsed(!isCollapsed)}
       >
         <a 
           href={`https://www.reddit.com/user/${comment.author}`}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
         >
           <strong style={{ 
             background: authorColor,
@@ -68,24 +76,34 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
           target="_blank"
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+          onClick={(e) => e.stopPropagation()}
         >
           ➜
         </a>
+        {isCollapsed && (
+            <span style={{ marginLeft: '3px' }}>
+            {tempDiv.textContent}
+            </span>
+        )}
       </div>
 
-      <div dangerouslySetInnerHTML={{ __html: tempDiv.innerHTML }} />
+      {!isCollapsed && (
+        <>
+          <div dangerouslySetInnerHTML={{ __html: tempDiv.innerHTML }} />
 
-      {comment.replies && comment.replies[0] && level < maxLevel && (
-        comment.replies
-          .slice(0, maxLevel - level)
-          .map(reply => (
-            <Comment 
-              key={reply.id || reply.created_utc}
-              comment={reply}
-              level={level + 1}
-              maxLevel={maxLevel}
-            />
-          ))
+          {comment.replies && comment.replies[0] && level < maxLevel && (
+            comment.replies
+              .slice(0, maxLevel - level)
+              .map(reply => (
+                <Comment 
+                  key={reply.id || reply.created_utc}
+                  comment={reply}
+                  level={level + 1}
+                  maxLevel={maxLevel}
+                />
+              ))
+          )}
+        </>
       )}
     </div>
   )
