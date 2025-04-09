@@ -1,7 +1,7 @@
 {
   "name": "reddit-comment-companion",
   "displayName": "Reddit comment companion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Show comments for a Reddit post on the overview page",
   "author": "Tim Jonas Meinerzhagen",
   "scripts": {
