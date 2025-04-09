@@ -88,7 +88,7 @@
 }
 
 .rcc-comment p {
-  font-size: 16px;
+  // font-size: 16px;
 }
 
 .rcc-comment img {
@@ -101,11 +101,11 @@
   border-top: 2px solid #343536;
   border-left: 2px solid #343536;
   padding: 5px;
-  font-size: 16px;
+  // font-size: 16px;
 }
 
 .rcc-reply p {
-  font-size: 16px;
+  // font-size: 16px;
 }
 
 .rcc-metadata {
@@ -139,6 +139,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 14px;
 }
 
 .rcc-settings-input {

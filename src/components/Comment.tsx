@@ -6,13 +6,14 @@ interface CommentProps {
   comment: RedditComment
   level: number
   maxLevel: number
+  fontSize: number
 }
 
 const decodeHtml = (html: string): string => {  
   return html.trim().replace(/&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
-export default function Comment({ comment, level, maxLevel }: CommentProps) {
+export default function Comment({ comment, level, maxLevel, fontSize = 14 }: CommentProps) {
   const [isCollapsed, setIsCollapsed] = useState(comment.collapsed || false)
   
   if (!comment.author) return null
@@ -46,7 +47,7 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
       <div 
         className="rcc-metadata"
         style={{ 
-          fontSize: level > 0 ? '11px' : '12px',
+          fontSize: `${fontSize}px`,
           cursor: 'pointer',
         }}
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -94,7 +95,9 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
 
       {!isCollapsed && (
         <>
-          <div dangerouslySetInnerHTML={{ __html: tempDiv.innerHTML }} />
+          <div 
+            dangerouslySetInnerHTML={{ __html: tempDiv.innerHTML }} 
+            style={{ fontSize: `${fontSize}px` }} />
 
           {comment.replies && comment.replies[0] && level < maxLevel && (
             comment.replies
@@ -105,6 +108,7 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
                   comment={reply}
                   level={level + 1}
                   maxLevel={maxLevel}
+                  fontSize={fontSize}
                 />
               ))
           )}

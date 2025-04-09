@@ -21,10 +21,12 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
     parseInt(localStorage.getItem('reddit-comment-companion-maxLevel') || '1')
   )
   const [containerWidth, setContainerWidth] = useState(
-    parseInt(localStorage.getItem('reddit-comment-companion-containerWidth') || '20')
+    parseInt(localStorage.getItem('reddit-comment-companion-containerWidth') || '25')
+  )
+  const [fontSize, setFontSize] = useState(
+    parseInt(localStorage.getItem('reddit-comment-companion-fontSize') || '14')
   )
   const scrollRef = useRef(null);
-
 
   const loadPost = async () => {
     setPost({title: '', permalink: '', comments: []})
@@ -49,7 +51,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   }
 
   return (
-    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none' }} ref={scrollRef}>
+    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
       <div className="rcc-top-bar">
         <a 
           href={`https://www.reddit.com${href}`}
@@ -80,6 +82,8 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           setSortOption={setSortOption}
           containerWidth={containerWidth}
           setContainerWidth={setContainerWidth}
+          fontSize={fontSize}
+          setFontSize={setFontSize}
           onClose={() => {setShowSettings(false);  }} />}
       {loading && <LoadingIndicator/>}
       {!loading && post.comments.length && <div className="rcc-comments-list">       
@@ -88,7 +92,8 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
             key={comment.id}
             comment={comment}
             level={0}
-            maxLevel={maxLevel} 
+            maxLevel={maxLevel}
+            fontSize={fontSize}
           />
         ))}
       </div>}
