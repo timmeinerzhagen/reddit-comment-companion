@@ -47,7 +47,7 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
         className="rcc-metadata"
         style={{ 
           fontSize: level > 0 ? '11px' : '12px',
-          cursor: 'row-resize',
+          cursor: 'pointer',
         }}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
