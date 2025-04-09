@@ -8,6 +8,8 @@ A browser extension that helps you navigate and interact with Reddit comments mo
 
 - Shows Reddit comments in a sidebar instead of having to open new tab
 - Supports full markdown, images, gifs
+- Hover over the "Comments" button of any post to load comments
+- Works with RES
 - Collapsing comments
 
 ## Install
@@ -45,3 +47,7 @@ pnpm build
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to help improve this extension.
+
+## Acknoledgements
+
+Based on the no longer maintained [`richmondwatkins/RedditCommentCompanion`](https://github.com/richmondwatkins/RedditCommentCompanion). Rebuilt from scratch.
