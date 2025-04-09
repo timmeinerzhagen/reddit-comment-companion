@@ -13,7 +13,7 @@ export function timeAgo(timestamp: number): string {
   for (const [unit, secondsInUnit] of Object.entries(intervals)) {
     const interval = Math.floor(seconds / secondsInUnit)
     if (interval >= 1) {
-      return `${interval}${unit} ago`
+      return `${interval}${unit}`
     }
   }
 
