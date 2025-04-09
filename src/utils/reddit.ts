@@ -9,6 +9,9 @@ export interface RedditComment {
   body_html: string
   distinguished: string
   is_submitter: boolean
+  ups: number
+  downs: number
+  collapsed: boolean
   replies: RedditComment[]
 }
 

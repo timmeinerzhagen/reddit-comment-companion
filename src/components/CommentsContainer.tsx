@@ -56,17 +56,18 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           target="_blank"
           rel="noopener noreferrer"
           className="rcc-post-title"
-          style={{ color: '#D7DADC' }}>
+          style={{ color: '#D7DADC' }}
+          title={title}>
           {title}
         </a>
         <div className="rcc-controls">
-          <button className="rcc-control-button" onClick={() => loadPost()}>
+          <button title="Reload Comments" className="rcc-control-button" onClick={() => loadPost()}>
             <span className="rcc-button-icon">↻</span>
           </button>
-          <button className="rcc-control-button" onClick={() => setShowSettings(true)}>
+          <button title="Settings" className="rcc-control-button" onClick={() => setShowSettings(true)}>
             <span className="rcc-button-icon">⚙</span>
           </button>
-          <button className="rcc-control-button" onClick={() => setShowContainer(false)}>
+          <button title="Close" className="rcc-control-button" onClick={() => setShowContainer(false)}>
             <span className="rcc-button-icon">✖</span>
           </button>
         </div>

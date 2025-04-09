@@ -13,7 +13,7 @@ const decodeHtml = (html: string): string => {
 }
 
 export default function Comment({ comment, level, maxLevel }: CommentProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(comment.collapsed || false)
   
   if (!comment.author) return null
 
@@ -66,10 +66,14 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
         </a>
         <span> | </span>
         <span>
-          {comment.score_hidden ? '?' : (comment.score > 0 ? '+' : '') + comment.score}
+            <span 
+              title={`${comment.ups / (comment.downs+1) * 100}% | Up: +${comment.ups} | Down: ${comment.downs}`}
+            >
+              {comment.score_hidden ? '?' : (comment.score > 0 ? '+' : '') + comment.score}
+            </span>
         </span>
         <span> | </span>
-        <span>{timeAgo(comment.created_utc)}</span>
+        <span title={new Date(comment.created_utc * 1000).toLocaleString()}>{timeAgo(comment.created_utc)}</span>
         <span> | </span>
         <a 
           href={`https://www.reddit.com${comment.permalink}`}
@@ -77,6 +81,7 @@ export default function Comment({ comment, level, maxLevel }: CommentProps) {
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
           onClick={(e) => e.stopPropagation()}
+          title="View on Reddit"
         >
           ➜
         </a>
