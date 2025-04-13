@@ -14,6 +14,8 @@ A browser extension that helps you navigate and interact with Reddit comments mo
 
 ## Install
 
+<a href="https://addons.mozilla.org/firefox/addon/reddit-comment-companions/"><img src="docs/firefox.png" alt="Get Reddit Comment Companion for Firefox"/>
+
 ### From Source
 
 1. Clone this repository
