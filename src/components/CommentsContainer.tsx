@@ -54,7 +54,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
     <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
       <div className="rcc-top-bar">
         <a 
-          href={`https://www.reddit.com${href}`}
+          href={href}
           target="_blank"
           rel="noopener noreferrer"
           className="rcc-post-title"
