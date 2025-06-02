@@ -80,6 +80,38 @@
   white-space: nowrap;
 }
 
+/* Vote buttons */
+.rcc-vote-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 4px;
+}
+
+.rcc-vote-button {
+  padding: 1px 3px;
+  min-width: 16px;
+  min-height: 14px;
+  font-size: 10px;
+}
+
+.rcc-upvote:hover {
+  color: #ff4500;
+}
+
+.rcc-downvote:hover {
+  color: #7193ff;
+}
+
+.rcc-vote-score {
+  color: #D7DADC;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 1px 0;
+  min-width: 20px;
+  text-align: center;
+}
+
 /* Comments */
 .rcc-comment {
   padding: 6px 2px;

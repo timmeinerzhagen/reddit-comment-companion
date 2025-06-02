@@ -19,6 +19,13 @@ export interface RedditPost {
   title: string
   permalink: string
   comments: RedditComment[]
+  id?: string
+  name?: string
+  score?: number
+  ups?: number
+  downs?: number
+  likes?: boolean | null
+  url?: string
 }
 
 export type SortOption = 'top' | 'confidence' | 'new' | 'controversial' | 'old' | 'qa'
@@ -45,9 +52,18 @@ export async function fetchPost(href: string, sortOption: string): Promise<Reddi
     replies: extractReplies(child.data)
   }))
 
+  const postData = data[0].data.children[0].data
+
   return {
     comments,
-    title: data[0].data.children[0].data.title,
-    permalink: data[0].data.children[0].data.permalink
+    title: postData.title,
+    permalink: postData.permalink,
+    id: postData.id,
+    name: postData.name,
+    score: postData.score,
+    ups: postData.ups,
+    downs: postData.downs,
+    likes: postData.likes,
+    url: postData.url
   }
 }

@@ -63,6 +63,23 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           {title}
         </a>
         <div className="rcc-controls">
+          <div className="rcc-vote-buttons">
+            <button 
+              title={`Upvote (Score: ${post.score || 0})`}
+              className="rcc-control-button rcc-vote-button rcc-upvote"
+              onClick={() => window.open(`https://www.reddit.com${post.permalink}`, '_blank')}
+            >
+              <span className="rcc-button-icon">▲</span>
+            </button>
+            <span className="rcc-vote-score">{post.score || 0}</span>
+            <button 
+              title="Downvote"
+              className="rcc-control-button rcc-vote-button rcc-downvote"
+              onClick={() => window.open(`https://www.reddit.com${post.permalink}`, '_blank')}
+            >
+              <span className="rcc-button-icon">▼</span>
+            </button>
+          </div>
           <button title="Reload Comments" className="rcc-control-button" onClick={() => loadPost()}>
             <span className="rcc-button-icon">↻</span>
           </button>
