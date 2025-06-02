@@ -42,6 +42,23 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
     }
   }
 
+  // Manage body class and CSS variable for sidebar
+  useEffect(() => {
+    if (showContainer) {
+      document.body.classList.add('rcc-sidebar-open')
+      document.body.style.setProperty('--rcc-sidebar-width', `${containerWidth}vw`)
+    } else {
+      document.body.classList.remove('rcc-sidebar-open')
+      document.body.style.removeProperty('--rcc-sidebar-width')
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('rcc-sidebar-open')
+      document.body.style.removeProperty('--rcc-sidebar-width')
+    }
+  }, [showContainer, containerWidth])
+
   useEffect(() => {
     loadPost()
   }, [href, sortOption])

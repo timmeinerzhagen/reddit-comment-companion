@@ -219,3 +219,15 @@ a:hover {
   margin-left: 10px;
   padding: 0px 8px;
 }
+
+/* Main content adjustment when sidebar is visible */
+body.rcc-sidebar-open {
+  margin-right: var(--rcc-sidebar-width, 25vw);
+  transition: margin-right 0.3s ease;
+}
+
+body.rcc-sidebar-open #siteTable,
+body.rcc-sidebar-open .content {
+  margin-right: 0;
+  max-width: none;
+}
