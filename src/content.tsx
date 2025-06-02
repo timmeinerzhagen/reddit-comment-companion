@@ -39,7 +39,8 @@ const PlasmoOverlay = () => {
             if (
               href !== hrefPost &&
               hrefPost &&
-              hrefPost.includes("/comments/")
+              hrefPost.includes("/comments/") &&
+              hrefPost.match(/\/r\/[^\/]+\/comments\/[^\/]+/)
             ) {
               setHref(hrefPost)
 
@@ -59,11 +60,25 @@ const PlasmoOverlay = () => {
                 let currentElement = button.parentElement
                 let depth = 0
                 while (currentElement && depth < 10) {
+                  // Look for h3 elements (common in new Reddit)
                   const h3Title =
                     currentElement.querySelector("h3")?.textContent
                   if (h3Title) {
                     title = h3Title
                     break
+                  }
+
+                  // Look for elements with post title classes
+                  const titleElement = currentElement.querySelector(
+                    '[data-click-id="body"], [data-testid="post-content"], .Post'
+                  )
+                  if (titleElement) {
+                    const titleInElement =
+                      titleElement.querySelector("h3")?.textContent
+                    if (titleInElement) {
+                      title = titleInElement
+                      break
+                    }
                   }
 
                   // Try data-click-id="background" which often contains post content
