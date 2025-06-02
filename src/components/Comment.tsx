@@ -68,7 +68,7 @@ export default function Comment({ comment, level, maxLevel, fontSize = 14 }: Com
         <span> | </span>
         <span>
             <span 
-              title={`${comment.ups / (comment.downs+1) * 100}% | Up: +${comment.ups} | Down: ${comment.downs}`}
+              title={`Score: ${comment.score} | Upvotes: ${comment.ups}`}
             >
               {comment.score_hidden ? '?' : (comment.score > 0 ? '+' : '') + comment.score}
             </span>
