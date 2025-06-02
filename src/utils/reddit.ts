@@ -1,4 +1,3 @@
-
 export interface RedditComment {
   id: string
   author: string
@@ -27,35 +26,47 @@ export interface RedditPost {
   link_id: string
 }
 
-export type SortOption = 'top' | 'confidence' | 'new' | 'controversial' | 'old' | 'qa'
+export type SortOption =
+  | "top"
+  | "confidence"
+  | "new"
+  | "controversial"
+  | "old"
+  | "qa"
 
-export async function fetchMoreChildren(linkId: string, children: string[], sort: string = 'top'): Promise<RedditComment[]> {
-  const childrenStr = children.join(',')
-  const response = await fetch(`https://www.reddit.com/api/morechildren.json?api_type=json&link_id=${linkId}&children=${childrenStr}&sort=${sort}`)
-  
+export async function fetchMoreChildren(
+  linkId: string,
+  children: string[],
+  sort: string = "top"
+): Promise<RedditComment[]> {
+  const childrenStr = children.join(",")
+  const response = await fetch(
+    `https://www.reddit.com/api/morechildren.json?api_type=json&link_id=${linkId}&children=${childrenStr}&sort=${sort}`
+  )
+
   if (!response.ok) {
     throw new Error(`Error fetching more comments: ${response.statusText}`)
   }
-  
+
   const data = await response.json()
-  
+
   function extractReplies(comment: any): RedditComment[] {
     if (!comment.replies || !comment.replies.data) return []
-    return comment.replies.data.children.map(child => {
-      if (child.kind === 'more') {
+    return comment.replies.data.children.map((child) => {
+      if (child.kind === "more") {
         return {
           id: child.data.id,
-          kind: 'more',
+          kind: "more",
           children: child.data.children,
           count: child.data.count,
           parent_id: child.data.parent_id,
-          author: '',
+          author: "",
           score: 0,
           score_hidden: false,
           created_utc: 0,
-          permalink: '',
-          body_html: '',
-          distinguished: '',
+          permalink: "",
+          body_html: "",
+          distinguished: "",
           is_submitter: false,
           ups: 0,
           downs: 0,
@@ -69,23 +80,23 @@ export async function fetchMoreChildren(linkId: string, children: string[], sort
       }
     })
   }
-  
+
   if (data.json && data.json.data && data.json.data.things) {
-    return data.json.data.things.map(child => {
-      if (child.kind === 'more') {
+    return data.json.data.things.map((child) => {
+      if (child.kind === "more") {
         return {
           id: child.data.id,
-          kind: 'more',
+          kind: "more",
           children: child.data.children,
           count: child.data.count,
           parent_id: child.data.parent_id,
-          author: '',
+          author: "",
           score: 0,
           score_hidden: false,
           created_utc: 0,
-          permalink: '',
-          body_html: '',
-          distinguished: '',
+          permalink: "",
+          body_html: "",
+          distinguished: "",
           is_submitter: false,
           ups: 0,
           downs: 0,
@@ -99,38 +110,43 @@ export async function fetchMoreChildren(linkId: string, children: string[], sort
       }
     })
   }
-  
+
   return []
 }
 
-export async function fetchPost(href: string, sortOption: string): Promise<RedditPost> {
-  const response = await fetch(`${href}.json?sort=${sortOption}&depth=2&limit=100`)
+export async function fetchPost(
+  href: string,
+  sortOption: string
+): Promise<RedditPost> {
+  const response = await fetch(
+    `${href}.json?sort=${sortOption}&depth=2&limit=100`
+  )
 
   if (!response.ok) {
     throw new Error(`Error fetching comments: ${response.statusText}`)
   }
 
   const data = await response.json()
-  
+
   function extractReplies(comment: any): RedditComment[] {
     if (!comment.replies || !comment.replies.data) return []
-    return comment.replies.data.children.map(child => {
-      if (child.kind === 'more') {
+    return comment.replies.data.children.map((child) => {
+      if (child.kind === "more") {
         // Handle "more comments" objects
         return {
           id: child.data.id,
-          kind: 'more',
+          kind: "more",
           children: child.data.children,
           count: child.data.count,
           parent_id: child.data.parent_id,
           // Default values for required fields
-          author: '',
+          author: "",
           score: 0,
           score_hidden: false,
           created_utc: 0,
-          permalink: '',
-          body_html: '',
-          distinguished: '',
+          permalink: "",
+          body_html: "",
+          distinguished: "",
           is_submitter: false,
           ups: 0,
           downs: 0,
@@ -145,23 +161,23 @@ export async function fetchPost(href: string, sortOption: string): Promise<Reddi
     })
   }
 
-  const comments = data[1].data.children.map(child => {
-    if (child.kind === 'more') {
+  const comments = data[1].data.children.map((child) => {
+    if (child.kind === "more") {
       // Handle "more comments" objects
       return {
         id: child.data.id,
-        kind: 'more',
+        kind: "more",
         children: child.data.children,
         count: child.data.count,
         parent_id: child.data.parent_id,
         // Default values for required fields
-        author: '',
+        author: "",
         score: 0,
         score_hidden: false,
         created_utc: 0,
-        permalink: '',
-        body_html: '',
-        distinguished: '',
+        permalink: "",
+        body_html: "",
+        distinguished: "",
         is_submitter: false,
         ups: 0,
         downs: 0,

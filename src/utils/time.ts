@@ -1,6 +1,6 @@
 export function timeAgo(timestamp: number): string {
-  const seconds = Math.floor((Date.now() / 1000) - timestamp)
-  
+  const seconds = Math.floor(Date.now() / 1000 - timestamp)
+
   const intervals = {
     y: 31536000,
     mn: 2592000,
@@ -17,5 +17,5 @@ export function timeAgo(timestamp: number): string {
     }
   }
 
-  return 'just now'
+  return "just now"
 }

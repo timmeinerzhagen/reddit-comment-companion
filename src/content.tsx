@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react'
-import type { PlasmoCSConfig } from "plasmo"
-import CommentsContainer from './components/CommentsContainer'
-
 import styleText from "data-text:./style.scss"
-import type { PlasmoGetStyle } from "plasmo"
+import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo"
+import { useEffect, useState } from "react"
+
+import CommentsContainer from "./components/CommentsContainer"
 
 export const config: PlasmoCSConfig = {
   matches: ["*://*.reddit.com/*"]
 }
- 
+
 export const getStyle: PlasmoGetStyle = () => {
   const style = document.createElement("style")
   style.textContent = styleText
@@ -16,18 +15,21 @@ export const getStyle: PlasmoGetStyle = () => {
 }
 
 const PlasmoOverlay = () => {
-  const [href, setHref] = useState<string>('')
-  const [title, setTitle] = useState<string>('')
+  const [href, setHref] = useState<string>("")
+  const [title, setTitle] = useState<string>("")
 
   useEffect(() => {
     // Attach comment hover listeners
     const attachCommentHoverListeners = () => {
-      document.querySelectorAll('a.comments').forEach(button => {
-        button.addEventListener('mouseover', () => {
-          const hrefPost = button.getAttribute('href')
+      document.querySelectorAll("a.comments").forEach((button) => {
+        button.addEventListener("mouseover", () => {
+          const hrefPost = button.getAttribute("href")
           if (href !== hrefPost) {
             setHref(hrefPost)
-            setTitle(button.parentNode.parentNode.parentNode.querySelector(".title a").textContent)
+            setTitle(
+              button.parentNode.parentNode.parentNode.querySelector(".title a")
+                .textContent
+            )
           }
         })
       })
@@ -43,7 +45,7 @@ const PlasmoOverlay = () => {
 
   return (
     <div>
-      <CommentsContainer href={href} title={title}/>
+      <CommentsContainer href={href} title={title} />
     </div>
   )
 }
