@@ -3,13 +3,13 @@
   position: fixed;
   top: 0;
   right: 0;
-  background-color: #1A1A1B;
+  background-color: #1a1a1b;
   border: 1px solid #343536;
   height: 100vh;
   z-index: 10000001;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-  color: #D7DADC;
+  color: #d7dadc;
   font-family: Arial, sans-serif;
   overflow: auto;
   scrollbar-width: none;
@@ -21,8 +21,8 @@
   position: sticky;
   top: 0;
   padding: 10px;
-  background-color: #1A1A1B;
-  color: #D7DADC;
+  background-color: #1a1a1b;
+  color: #d7dadc;
   height: 10px;
   font-weight: bold;
   border-bottom: 1px solid #343536;
@@ -40,13 +40,13 @@
   text-align: left;
   font-size: 16px;
   font-weight: bold;
-  color: #D7DADC;
+  color: #d7dadc;
   text-decoration: none;
 }
 
 /* Control Buttons */
 .rcc-control-button {
-  color: #FFFFFF;
+  color: #ffffff;
   border: none !important;
   border-radius: 4px;
   padding: 2px 4px;
@@ -109,13 +109,13 @@
 }
 
 .rcc-metadata {
-  display: 'inline';
-  width: '100%';
+  display: "inline";
+  width: "100%";
   color: rgb(166, 166, 166);
   margin-bottom: 2px;
   white-space: nowrap;
-  overflow: 'hidden';
-  text-overflow: 'ellipsis';
+  overflow: "hidden";
+  text-overflow: "ellipsis";
 }
 
 .rcc-metadata a {
@@ -129,8 +129,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #1A1A1B;
-  color: #D7DADC;
+  background-color: #1a1a1b;
+  color: #d7dadc;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
@@ -147,14 +147,14 @@
   padding: 5px;
   border-radius: 4px;
   border: 1px solid #343536;
-  background-color: #2A2A2B;
-  color: #D7DADC;
+  background-color: #2a2a2b;
+  color: #d7dadc;
 }
 
 .rcc-settings-button {
   margin-top: 10px;
-  background-color: #0079D3;
-  color: #FFFFFF;
+  background-color: #0079d3;
+  color: #ffffff;
   border: none;
   border-radius: 4px;
   padding: 5px 10px;
@@ -187,23 +187,27 @@
   width: 40px;
   height: 40px;
   border: 3px solid #343536;
-  border-top: 3px solid #D7DADC;
+  border-top: 3px solid #d7dadc;
   border-radius: 50%;
   animation: rcc-spin 1s linear infinite;
 }
 
 @keyframes rcc-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-p  {
+p {
   margin: 0;
   padding: 0;
 }
 
 a {
-  color: #0079D3;
+  color: #0079d3;
   text-decoration: none;
 }
 

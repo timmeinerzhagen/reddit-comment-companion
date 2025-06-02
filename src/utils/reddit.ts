@@ -1,4 +1,3 @@
-
 export interface RedditComment {
   id: string
   author: string
@@ -21,9 +20,18 @@ export interface RedditPost {
   comments: RedditComment[]
 }
 
-export type SortOption = 'top' | 'confidence' | 'new' | 'controversial' | 'old' | 'qa'
+export type SortOption =
+  | "top"
+  | "confidence"
+  | "new"
+  | "controversial"
+  | "old"
+  | "qa"
 
-export async function fetchPost(href: string, sortOption: string): Promise<RedditPost> {
+export async function fetchPost(
+  href: string,
+  sortOption: string
+): Promise<RedditPost> {
   const response = await fetch(`${href}.json?sort=${sortOption}`)
 
   if (!response.ok) {
@@ -31,16 +39,16 @@ export async function fetchPost(href: string, sortOption: string): Promise<Reddi
   }
 
   const data = await response.json()
-  
+
   function extractReplies(comment: any): RedditComment[] {
     if (!comment.replies || !comment.replies.data) return []
-    return comment.replies.data.children.map(child => ({
+    return comment.replies.data.children.map((child) => ({
       ...child.data,
       replies: extractReplies(child.data)
     }))
   }
 
-  const comments = data[1].data.children.map(child => ({
+  const comments = data[1].data.children.map((child) => ({
     ...child.data,
     replies: extractReplies(child.data)
   }))

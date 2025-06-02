@@ -1,4 +1,6 @@
-import React from 'react'
+import React from "react"
+
+import { saveSettings, type SettingsData } from "../utils/storage"
 
 interface SettingsModalProps {
   onClose: () => void
@@ -12,24 +14,33 @@ interface SettingsModalProps {
   setFontSize: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function SettingsModal({ 
-  onClose, 
-  maxLevel, 
-  setMaxLevel, 
-  sortOption, 
-  setSortOption, 
-  containerWidth, 
+export default function SettingsModal({
+  onClose,
+  maxLevel,
+  setMaxLevel,
+  sortOption,
+  setSortOption,
+  containerWidth,
   setContainerWidth,
   fontSize,
   setFontSize
 }: SettingsModalProps) {
+  const handleSave = async () => {
+    const settings: SettingsData = {
+      sortOption,
+      maxLevel,
+      containerWidth,
+      fontSize
+    }
 
-  const handleSave = () => {
-    localStorage.setItem('reddit-comment-companion-sortOption', sortOption)
-    localStorage.setItem('reddit-comment-companion-maxLevel', maxLevel.toString())
-    localStorage.setItem('reddit-comment-companion-containerWidth', containerWidth.toString())
-    localStorage.setItem('reddit-comment-companion-fontSize', fontSize.toString())
-    onClose()
+    try {
+      await saveSettings(settings)
+      onClose()
+    } catch (error) {
+      console.error("Failed to save settings:", error)
+      // Still close the modal even if save fails
+      onClose()
+    }
   }
 
   return (
@@ -40,14 +51,13 @@ export default function SettingsModal({
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
           style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
-        >
+            marginLeft: "10px",
+            padding: "5px",
+            borderRadius: "4px",
+            border: "1px solid #343536",
+            backgroundColor: "#2A2A2B",
+            color: "#D7DADC"
+          }}>
           <option value="top">Top</option>
           <option value="confidence">Best</option>
           <option value="new">New</option>
@@ -65,12 +75,12 @@ export default function SettingsModal({
           onChange={(e) => setMaxLevel(parseInt(e.target.value))}
           min={0}
           style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
+            marginLeft: "10px",
+            padding: "5px",
+            borderRadius: "4px",
+            border: "1px solid #343536",
+            backgroundColor: "#2A2A2B",
+            color: "#D7DADC"
           }}
         />
       </label>
@@ -82,12 +92,12 @@ export default function SettingsModal({
           value={containerWidth}
           onChange={(e) => setContainerWidth(parseInt(e.target.value))}
           style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
+            marginLeft: "10px",
+            padding: "5px",
+            borderRadius: "4px",
+            border: "1px solid #343536",
+            backgroundColor: "#2A2A2B",
+            color: "#D7DADC"
           }}
         />
       </label>
@@ -100,12 +110,12 @@ export default function SettingsModal({
           onChange={(e) => setFontSize(parseInt(e.target.value))}
           min={7}
           style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
+            marginLeft: "10px",
+            padding: "5px",
+            borderRadius: "4px",
+            border: "1px solid #343536",
+            backgroundColor: "#2A2A2B",
+            color: "#D7DADC"
           }}
         />
       </label>
@@ -113,15 +123,14 @@ export default function SettingsModal({
       <button
         onClick={handleSave}
         style={{
-          marginTop: '10px',
-          backgroundColor: '#0079D3',
-          color: '#FFFFFF',
-          border: 'none',
-          borderRadius: '4px',
-          padding: '5px 10px',
-          cursor: 'pointer'
-        }}
-      >
+          marginTop: "10px",
+          backgroundColor: "#0079D3",
+          color: "#FFFFFF",
+          border: "none",
+          borderRadius: "4px",
+          padding: "5px 10px",
+          cursor: "pointer"
+        }}>
         Save
       </button>
     </div>
