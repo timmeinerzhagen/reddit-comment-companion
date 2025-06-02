@@ -34,19 +34,12 @@ export default function SettingsModal({
 
   return (
     <div className="rcc-settings-modal">
-      <label>
-        Sort Comments By:
+      <div className="rcc-settings-form">
+        <label className="rcc-form-label">Sort Comments By:</label>
         <select
+          className="rcc-form-input"
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
         >
           <option value="top">Top</option>
           <option value="confidence">Best</option>
@@ -55,72 +48,37 @@ export default function SettingsModal({
           <option value="old">Old</option>
           <option value="qa">Q&A</option>
         </select>
-      </label>
 
-      <label>
-        Max Reply Level:
+        <label className="rcc-form-label">Max Reply Level:</label>
         <input
+          className="rcc-form-input"
           type="number"
           value={maxLevel}
           onChange={(e) => setMaxLevel(parseInt(e.target.value))}
           min={0}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
         />
-      </label>
 
-      <label>
-        Container Width (% of screen):
+        <label className="rcc-form-label">Container Width (% of screen):</label>
         <input
+          className="rcc-form-input"
           type="number"
           value={containerWidth}
           onChange={(e) => setContainerWidth(parseInt(e.target.value))}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
         />
-      </label>
 
-      <label>
-        Font Size (px):
+        <label className="rcc-form-label">Font Size (px):</label>
         <input
+          className="rcc-form-input"
           type="number"
           value={fontSize}
           onChange={(e) => setFontSize(parseInt(e.target.value))}
           min={7}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
         />
-      </label>
+      </div>
 
       <button
+        className="rcc-settings-button"
         onClick={handleSave}
-        style={{
-          marginTop: '10px',
-          backgroundColor: '#0079D3',
-          color: '#FFFFFF',
-          border: 'none',
-          borderRadius: '4px',
-          padding: '5px 10px',
-          cursor: 'pointer'
-        }}
       >
         Save
       </button>
