@@ -28,6 +28,15 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   )
   const scrollRef = useRef(null);
 
+  const handleCommentsLoaded = (newComments: RedditPost['comments'], parentCommentId: string) => {
+    // For now, we'll just add them to the main comments list
+    // In a more sophisticated implementation, we'd replace the "more" object with the loaded comments
+    setPost(prevPost => ({
+      ...prevPost,
+      comments: [...prevPost.comments, ...newComments]
+    }))
+  }
+
   const loadPost = async () => {
     setPost({title: '', permalink: '', comments: []})
     if(href) {
@@ -94,6 +103,9 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
             level={0}
             maxLevel={maxLevel}
             fontSize={fontSize}
+            linkId={post.link_id}
+            sortOption={sortOption}
+            onCommentsLoaded={handleCommentsLoaded}
           />
         ))}
       </div>}

@@ -1,20 +1,53 @@
 import { timeAgo } from '../utils/time'
 import type { RedditComment } from '../utils/reddit'
 import { useState } from 'react'
+import LoadMoreComments from './LoadMoreComments'
 
 interface CommentProps {
   comment: RedditComment
   level: number
   maxLevel: number
   fontSize: number
+  linkId?: string
+  sortOption?: string
+  onCommentsLoaded?: (comments: RedditComment[], parentCommentId: string) => void
 }
 
 const decodeHtml = (html: string): string => {  
   return html.trim().replace(/&apos;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
 
-export default function Comment({ comment, level, maxLevel, fontSize = 14 }: CommentProps) {
+export default function Comment({ 
+  comment, 
+  level, 
+  maxLevel, 
+  fontSize = 14, 
+  linkId, 
+  sortOption = 'top',
+  onCommentsLoaded 
+}: CommentProps) {
   const [isCollapsed, setIsCollapsed] = useState(comment.collapsed || false)
+  const [loadedComments, setLoadedComments] = useState<RedditComment[]>([])
+  
+  // Handle "more comments" objects
+  if (comment.kind === 'more') {
+    if (!linkId || !onCommentsLoaded) return null
+    
+    return (
+      <LoadMoreComments
+        comment={comment}
+        linkId={linkId}
+        sortOption={sortOption}
+        level={level}
+        maxLevel={maxLevel}
+        fontSize={fontSize}
+        onCommentsLoaded={(comments) => {
+          setLoadedComments(comments)
+          onCommentsLoaded(comments, comment.parent_id || '')
+        }}
+      />
+    )
+  }
   
   if (!comment.author) return null
 
@@ -109,9 +142,26 @@ export default function Comment({ comment, level, maxLevel, fontSize = 14 }: Com
                   level={level + 1}
                   maxLevel={maxLevel}
                   fontSize={fontSize}
+                  linkId={linkId}
+                  sortOption={sortOption}
+                  onCommentsLoaded={onCommentsLoaded}
                 />
               ))
           )}
+          
+          {/* Render loaded comments */}
+          {loadedComments.map(loadedComment => (
+            <Comment 
+              key={loadedComment.id || loadedComment.created_utc}
+              comment={loadedComment}
+              level={level + 1}
+              maxLevel={maxLevel}
+              fontSize={fontSize}
+              linkId={linkId}
+              sortOption={sortOption}
+              onCommentsLoaded={onCommentsLoaded}
+            />
+          ))}
         </>
       )}
     </div>
