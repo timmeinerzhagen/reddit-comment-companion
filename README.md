@@ -11,6 +11,7 @@ A browser extension that helps you navigate and interact with Reddit comments mo
 - Hover over the "Comments" button of any post to load comments
 - Currently only old Reddit. Works with RES
 - Collapsing comments
+- Post voting buttons (upvote/downvote) that open Reddit for voting
 
 ## Install
 
