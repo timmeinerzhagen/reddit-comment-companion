@@ -10,6 +10,8 @@ interface SettingsModalProps {
   setContainerWidth: React.Dispatch<React.SetStateAction<number>>
   fontSize: number
   setFontSize: React.Dispatch<React.SetStateAction<number>>
+  theme: string
+  setTheme: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function SettingsModal({ 
@@ -21,7 +23,9 @@ export default function SettingsModal({
   containerWidth, 
   setContainerWidth,
   fontSize,
-  setFontSize
+  setFontSize,
+  theme,
+  setTheme
 }: SettingsModalProps) {
 
   const handleSave = () => {
@@ -29,6 +33,7 @@ export default function SettingsModal({
     localStorage.setItem('reddit-comment-companion-maxLevel', maxLevel.toString())
     localStorage.setItem('reddit-comment-companion-containerWidth', containerWidth.toString())
     localStorage.setItem('reddit-comment-companion-fontSize', fontSize.toString())
+    localStorage.setItem('reddit-comment-companion-theme', theme)
     onClose()
   }
 
@@ -39,14 +44,7 @@ export default function SettingsModal({
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
+          className="rcc-settings-input"
         >
           <option value="top">Top</option>
           <option value="confidence">Best</option>
@@ -64,14 +62,7 @@ export default function SettingsModal({
           value={maxLevel}
           onChange={(e) => setMaxLevel(parseInt(e.target.value))}
           min={0}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
+          className="rcc-settings-input"
         />
       </label>
 
@@ -81,14 +72,7 @@ export default function SettingsModal({
           type="number"
           value={containerWidth}
           onChange={(e) => setContainerWidth(parseInt(e.target.value))}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
+          className="rcc-settings-input"
         />
       </label>
 
@@ -99,28 +83,25 @@ export default function SettingsModal({
           value={fontSize}
           onChange={(e) => setFontSize(parseInt(e.target.value))}
           min={7}
-          style={{
-            marginLeft: '10px',
-            padding: '5px',
-            borderRadius: '4px',
-            border: '1px solid #343536',
-            backgroundColor: '#2A2A2B',
-            color: '#D7DADC'
-          }}
+          className="rcc-settings-input"
         />
+      </label>
+
+      <label>
+        Theme:
+        <select
+          value={theme}
+          onChange={(e) => setTheme(e.target.value)}
+          className="rcc-settings-input"
+        >
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
       </label>
 
       <button
         onClick={handleSave}
-        style={{
-          marginTop: '10px',
-          backgroundColor: '#0079D3',
-          color: '#FFFFFF',
-          border: 'none',
-          borderRadius: '4px',
-          padding: '5px 10px',
-          cursor: 'pointer'
-        }}
+        className="rcc-settings-button"
       >
         Save
       </button>

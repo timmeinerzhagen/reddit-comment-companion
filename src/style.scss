@@ -1,15 +1,40 @@
+/* Theme Variables */
+.rcc-comments-container {
+  /* Dark theme (default) */
+  --rcc-bg-primary: #1A1A1B;
+  --rcc-bg-secondary: #2A2A2B;
+  --rcc-text-primary: #D7DADC;
+  --rcc-text-secondary: #A6A6A6;
+  --rcc-border-primary: #343536;
+  --rcc-border-secondary: #525456;
+  --rcc-accent: #0079D3;
+  --rcc-shadow: rgba(0, 0, 0, 0.5);
+}
+
+.rcc-comments-container.rcc-theme-light {
+  /* Light theme */
+  --rcc-bg-primary: #FFFFFF;
+  --rcc-bg-secondary: #F6F7F8;
+  --rcc-text-primary: #1A1A1B;
+  --rcc-text-secondary: #666666;
+  --rcc-border-primary: #EDEFF1;
+  --rcc-border-secondary: #D7DADC;
+  --rcc-accent: #0079D3;
+  --rcc-shadow: rgba(0, 0, 0, 0.1);
+}
+
 /* Container */
 .rcc-comments-container {
   position: fixed;
   top: 0;
   right: 0;
-  background-color: #1A1A1B;
-  border: 1px solid #343536;
+  background-color: var(--rcc-bg-primary);
+  border: 1px solid var(--rcc-border-primary);
   height: 100vh;
   z-index: 10000001;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-  color: #D7DADC;
+  box-shadow: 0px 4px 8px var(--rcc-shadow);
+  color: var(--rcc-text-primary);
   font-family: Arial, sans-serif;
   overflow: auto;
   scrollbar-width: none;
@@ -21,11 +46,11 @@
   position: sticky;
   top: 0;
   padding: 10px;
-  background-color: #1A1A1B;
-  color: #D7DADC;
+  background-color: var(--rcc-bg-primary);
+  color: var(--rcc-text-primary);
   height: 10px;
   font-weight: bold;
-  border-bottom: 1px solid #343536;
+  border-bottom: 1px solid var(--rcc-border-primary);
   text-align: center;
   display: flex;
   align-items: center;
@@ -40,13 +65,13 @@
   text-align: left;
   font-size: 16px;
   font-weight: bold;
-  color: #D7DADC;
+  color: var(--rcc-text-primary);
   text-decoration: none;
 }
 
 /* Control Buttons */
 .rcc-control-button {
-  color: #FFFFFF;
+  color: var(--rcc-text-primary);
   border: none !important;
   border-radius: 4px;
   padding: 2px 4px;
@@ -84,7 +109,7 @@
 .rcc-comment {
   padding: 6px 2px;
   margin: 2px 10px;
-  border-bottom: 2px solid #525456;
+  border-bottom: 2px solid var(--rcc-border-secondary);
 }
 
 .rcc-comment p {
@@ -98,8 +123,8 @@
 
 .rcc-reply {
   margin: 5px 2px 2px 10px;
-  border-top: 2px solid #343536;
-  border-left: 2px solid #343536;
+  border-top: 2px solid var(--rcc-border-primary);
+  border-left: 2px solid var(--rcc-border-primary);
   padding: 5px;
   // font-size: 16px;
 }
@@ -111,7 +136,7 @@
 .rcc-metadata {
   display: 'inline';
   width: '100%';
-  color: rgb(166, 166, 166);
+  color: var(--rcc-text-secondary);
   margin-bottom: 2px;
   white-space: nowrap;
   overflow: 'hidden';
@@ -129,11 +154,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #1A1A1B;
-  color: #D7DADC;
+  background-color: var(--rcc-bg-primary);
+  color: var(--rcc-text-primary);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 4px 8px var(--rcc-shadow);
   z-index: 1001;
   display: flex;
   flex-direction: column;
@@ -146,14 +171,14 @@
   margin-left: 10px;
   padding: 5px;
   border-radius: 4px;
-  border: 1px solid #343536;
-  background-color: #2A2A2B;
-  color: #D7DADC;
+  border: 1px solid var(--rcc-border-primary);
+  background-color: var(--rcc-bg-secondary);
+  color: var(--rcc-text-primary);
 }
 
 .rcc-settings-button {
   margin-top: 10px;
-  background-color: #0079D3;
+  background-color: var(--rcc-accent);
   color: #FFFFFF;
   border: none;
   border-radius: 4px;
@@ -186,8 +211,8 @@
 .rcc-loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid #343536;
-  border-top: 3px solid #D7DADC;
+  border: 3px solid var(--rcc-border-primary);
+  border-top: 3px solid var(--rcc-text-primary);
   border-radius: 50%;
   animation: rcc-spin 1s linear infinite;
 }
@@ -203,7 +228,7 @@ p  {
 }
 
 a {
-  color: #0079D3;
+  color: var(--rcc-accent);
   text-decoration: none;
 }
 
@@ -212,8 +237,8 @@ a:hover {
 }
 
 .md blockquote {
-  color: rgb(160, 160, 160);
-  border-left-color: rgb(100, 100, 100);
+  color: var(--rcc-text-secondary);
+  border-left-color: var(--rcc-border-secondary);
   border-left: 2px solid;
   margin: 0px;
   margin-left: 10px;
