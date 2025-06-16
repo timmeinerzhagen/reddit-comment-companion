@@ -31,5 +31,7 @@ dist/
 
 # typescript
 .tsbuildinfo
+yarn.lock
+tsconfig.tsbuildinfo
 
 keys.json
