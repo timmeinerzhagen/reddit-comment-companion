@@ -86,7 +86,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           setFontSize={setFontSize}
           onClose={() => {setShowSettings(false);  }} />}
       {loading && <LoadingIndicator/>}
-      {!loading && post.comments.length && <div className="rcc-comments-list">       
+      {!loading && post.comments.length > 0 && <div className="rcc-comments-list">       
         {post.comments.map((comment) => (
           <Comment 
             key={comment.id}
@@ -97,6 +97,11 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           />
         ))}
       </div>}
+      {!loading && post.comments.length === 0 && (
+        <div style={{ padding: '20px', textAlign: 'center', color: '#D7DADC' }}>
+          No comments available
+        </div>
+      )}
     </div>
   )
 }
