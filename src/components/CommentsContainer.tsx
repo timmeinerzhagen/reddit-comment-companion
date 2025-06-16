@@ -46,6 +46,13 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
     loadPost()
   }, [href, sortOption])
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape" && showContainer) {
+      setShowContainer(false)
+    }
+  }
+  document.addEventListener("keydown", handleKeyDown)
+
   if (!post) {
     return <div>Loading</div>
   }
