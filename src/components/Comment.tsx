@@ -10,7 +10,7 @@ interface CommentProps {
 }
 
 const decodeHtml = (html: string): string => {  
-  return html.trim().replace(/&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  return html.trim().replace(/&apos;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 }
 
 export default function Comment({ comment, level, maxLevel, fontSize = 14 }: CommentProps) {
