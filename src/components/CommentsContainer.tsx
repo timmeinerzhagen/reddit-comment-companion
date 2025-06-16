@@ -26,6 +26,9 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   const [fontSize, setFontSize] = useState(
     parseInt(localStorage.getItem('reddit-comment-companion-fontSize') || '14')
   )
+  const [theme, setTheme] = useState(
+    localStorage.getItem('reddit-comment-companion-theme') || 'dark'
+  )
   const scrollRef = useRef(null);
 
   const loadPost = async () => {
@@ -51,14 +54,13 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   }
 
   return (
-    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
+    <div className={`rcc-comments-container ${theme === 'light' ? 'rcc-theme-light' : ''}`} style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
       <div className="rcc-top-bar">
         <a 
           href={href}
           target="_blank"
           rel="noopener noreferrer"
           className="rcc-post-title"
-          style={{ color: '#D7DADC' }}
           title={title}>
           {title}
         </a>
@@ -84,6 +86,8 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           setContainerWidth={setContainerWidth}
           fontSize={fontSize}
           setFontSize={setFontSize}
+          theme={theme}
+          setTheme={setTheme}
           onClose={() => {setShowSettings(false);  }} />}
       {loading && <LoadingIndicator/>}
       {!loading && post.comments.length > 0 && <div className="rcc-comments-list">       
