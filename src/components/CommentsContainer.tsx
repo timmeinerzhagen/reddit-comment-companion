@@ -66,8 +66,8 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           rel="noopener noreferrer"
           className="rcc-post-title"
           style={{ color: '#D7DADC' }}
-          title={title}>
-          {title}
+          title={title || post.title}>
+          {title || post.title}
         </a>
         <div className="rcc-controls">
           <button title="Reload Comments" className="rcc-control-button" onClick={() => loadPost()}>

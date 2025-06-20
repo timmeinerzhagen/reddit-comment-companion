@@ -27,7 +27,20 @@ const PlasmoOverlay = () => {
           const hrefPost = button.getAttribute('href')
           if (href !== hrefPost) {
             setHref(hrefPost)
-            setTitle(button.parentNode.parentNode.parentNode.querySelector(".title a").textContent)
+            
+            // Try multiple selectors to find the title
+            let titleText = ''
+            const titleElement = 
+              button.parentNode.parentNode.parentNode.querySelector(".title a") ||
+              button.closest('.thing')?.querySelector('.title a') ||
+              button.closest('[data-context="listing"]')?.querySelector('.title a') ||
+              button.closest('.Post')?.querySelector('[data-click-id="text"]')
+            
+            if (titleElement) {
+              titleText = titleElement.textContent || ''
+            }
+            
+            setTitle(titleText.trim())
           }
         })
       })
