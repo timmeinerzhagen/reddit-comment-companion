@@ -26,24 +26,30 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   const [fontSize, setFontSize] = useState(
     parseInt(localStorage.getItem('reddit-comment-companion-fontSize') || '14')
   )
-  const scrollRef = useRef(null);
-
-  const loadPost = async () => {
-    setPost({title: '', permalink: '', comments: []})
-    if(href) {
-      setShowContainer(true)
-      setLoading(true)
-      const postData = await fetchPost(href, sortOption)
-      setPost(postData)
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = 0;
-      }
-      setLoading(false)
-    }
-  }
+  const scrollRef = useRef(null);  
 
   useEffect(() => {
+    let active = true
+    const loadPost = async () => {
+      setPost({title: '', permalink: '', comments: []})
+      if(href) {
+        setShowContainer(true)
+        setLoading(true)
+        const postData = await fetchPost(href, sortOption)
+        if(active) {
+          setPost(postData)
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = 0;
+          }
+          setLoading(false)
+        }
+        
+      }
+    }
     loadPost()
+    return () => {
+      active = false // invalidate if component unmounts
+    }
   }, [href, sortOption])
 
   const handleKeyDown = (event: KeyboardEvent) => {
