@@ -3,6 +3,7 @@ import { fetchPost, type RedditPost } from '../utils/reddit'
 import Comment from './Comment'
 import SettingsModal from './SettingsModal'
 import LoadingIndicator from './LoadingIndicator'
+import FloatingSidebar from './FloatingSidebar'
 
 interface CommentsContainerProps {
   href: string
@@ -25,6 +26,9 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   )
   const [fontSize, setFontSize] = useState(
     parseInt(localStorage.getItem('reddit-comment-companion-fontSize') || '14')
+  )
+  const [sidebarMode, setSidebarMode] = useState(
+    localStorage.getItem('reddit-comment-companion-sidebarMode') || 'docked'
   )
   const scrollRef = useRef(null);  
 
@@ -63,22 +67,34 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
     return <div>Loading</div>
   }
 
-  return (
-    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
+  const containerStyle = sidebarMode === 'docked' 
+    ? { width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }
+    : { display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }
+
+  const containerClassName = sidebarMode === 'docked' 
+    ? "rcc-comments-container" 
+    : "rcc-comments-container-floating"
+
+  const renderContent = () => (
+    <div className={containerClassName} style={containerStyle} ref={scrollRef}>
       <div className="rcc-top-bar">
-        <a 
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
+        <span
           className="rcc-post-title"
           style={{ color: '#D7DADC' }}
           title={title}>
           {title}
-        </a>
+        </span>
         <div className="rcc-controls">
-          <button title="Reload Comments" className="rcc-control-button" onClick={() => loadPost()}>
-            <span className="rcc-button-icon">↻</span>
-          </button>
+          <a 
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+              <button title="Open Post" className="rcc-control-button">
+                <span className="rcc-button-icon">➜</span>
+              </button>
+          </a>
           <button title="Settings" className="rcc-control-button" onClick={() => setShowSettings(true)}>
             <span className="rcc-button-icon">⚙</span>
           </button>
@@ -97,6 +113,8 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           setContainerWidth={setContainerWidth}
           fontSize={fontSize}
           setFontSize={setFontSize}
+          sidebarMode={sidebarMode}
+          setSidebarMode={setSidebarMode}
           onClose={() => {setShowSettings(false);  }} />}
       {loading && <LoadingIndicator/>}
       {!loading && post.comments.length > 0 && <div className="rcc-comments-list">       
@@ -117,4 +135,14 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
       )}
     </div>
   )
+
+  if (sidebarMode === 'floating') {
+    return (
+      <FloatingSidebar show={showContainer}>
+        {renderContent()}
+      </FloatingSidebar>
+    )
+  }
+
+  return renderContent()
 }
