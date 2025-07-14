@@ -28,9 +28,24 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   )
   const scrollRef = useRef(null);  
 
+  const loadPost = async () => {
+    setPost({title: '', permalink: '', comments: []})
+    if(href) {
+      setShowContainer(true)
+      setLoading(true)
+      const postData = await fetchPost(href, sortOption)
+      setPost(postData)
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+      }
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     let active = true
-    const loadPost = async () => {
+    
+    const loadPostWithCleanup = async () => {
       setPost({title: '', permalink: '', comments: []})
       if(href) {
         setShowContainer(true)
@@ -43,21 +58,36 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           }
           setLoading(false)
         }
-        
       }
     }
-    loadPost()
+    
+    loadPostWithCleanup()
     return () => {
       active = false // invalidate if component unmounts
     }
   }, [href, sortOption])
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape" && showContainer) {
-      setShowContainer(false)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && showContainer) {
+        setShowContainer(false)
+      }
     }
-  }
-  document.addEventListener("keydown", handleKeyDown)
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showContainer && scrollRef.current && !scrollRef.current.contains(event.target as Node)) {
+        setShowContainer(false)
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    document.addEventListener("mousedown", handleClickOutside)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showContainer])
 
   if (!post) {
     return <div>Loading</div>
