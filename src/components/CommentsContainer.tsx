@@ -64,8 +64,10 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   }
 
   return (
-    <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
-      <div className="rcc-top-bar">
+    <>
+      {showContainer && <div className="rcc-backdrop" onClick={() => setShowContainer(false)} />}
+      <div className="rcc-comments-container" style={{ width: `${containerWidth}vw`, display: showContainer ? 'block' : 'none', fontSize: `${fontSize}px` }} ref={scrollRef}>
+        <div className="rcc-top-bar">
         <a 
           href={href}
           target="_blank"
@@ -116,5 +118,6 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
         </div>
       )}
     </div>
+    </>
   )
 }
