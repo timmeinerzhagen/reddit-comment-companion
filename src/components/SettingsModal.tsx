@@ -40,15 +40,6 @@ export default function SettingsModal({
   return (
     <div className="rcc-settings-modal">
       <div className="rcc-settings-form">
-        <label className="rcc-form-label">Sidebar Mode:</label>
-        <select
-          className="rcc-form-input"
-          value={sidebarMode}
-          onChange={(e) => setSidebarMode(e.target.value)}
-        >
-          <option value="docked">Docked</option>
-          <option value="floating">Floating</option>
-        </select>
 
         <label className="rcc-form-label">Sort Comments By:</label>
         <select
@@ -72,6 +63,16 @@ export default function SettingsModal({
           onChange={(e) => setMaxLevel(parseInt(e.target.value))}
           min={0}
         />
+          
+        <label className="rcc-form-label">Sidebar Mode:</label>
+        <select
+          className="rcc-form-input"
+          value={sidebarMode}
+          onChange={(e) => setSidebarMode(e.target.value)}
+        >
+          <option value="docked">Docked</option>
+          <option value="floating">Floating</option>
+        </select>
 
         <label className="rcc-form-label">Container Width (% of screen):</label>
         <input
