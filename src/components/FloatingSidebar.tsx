@@ -40,7 +40,7 @@ export default function FloatingSidebar({ children, show }: FloatingSidebarProps
   return (
     <Rnd
       size={{ width: floatingSize.width, height: floatingSize.height }}
-      position={{ x: floatingPosition.x, y: floatingPosition.y }}
+      offsetFromParent={{ x: floatingPosition.x, y: floatingPosition.y }}
       onDragStop={handleFloatingDrag}
       onResizeStop={handleFloatingResize}
       minWidth={300}
