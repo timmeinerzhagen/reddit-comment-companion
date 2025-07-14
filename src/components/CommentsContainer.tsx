@@ -92,16 +92,23 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   const renderContent = () => (
     <div className={containerClassName} style={containerStyle} ref={scrollRef}>
       <div className="rcc-top-bar">
-        <a 
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
+        <span
           className="rcc-post-title"
           style={{ color: '#D7DADC' }}
           title={title}>
           {title}
-        </a>
+        </span>
         <div className="rcc-controls">
+          <a 
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+              <button title="Open Post" className="rcc-control-button">
+                <span className="rcc-button-icon">➜</span>
+              </button>
+          </a>
           <button title="Reload Comments" className="rcc-control-button" onClick={() => loadPost()}>
             <span className="rcc-button-icon">↻</span>
           </button>

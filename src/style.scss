@@ -30,7 +30,6 @@
   overflow: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  position: absolute;
 }
 
 /* Top Bar */
@@ -47,6 +46,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.rcc-comments-list {
+  cursor: default;
 }
 
 .rcc-post-title {

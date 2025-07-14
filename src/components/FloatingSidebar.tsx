@@ -8,9 +8,18 @@ interface FloatingSidebarProps {
 
 export default function FloatingSidebar({ children, show }: FloatingSidebarProps) {
   const [floatingPosition, setFloatingPosition] = useState({
-    x: parseInt(localStorage.getItem('reddit-comment-companion-floatingX') || '100'),
-    y: parseInt(localStorage.getItem('reddit-comment-companion-floatingY') || '100')
-  })  
+    x: 0,
+    y: 0
+  })
+  // initialize to 0, then set to saved position; overwise reltaive position is wrong
+  useEffect(() => {
+    const initialPosition = {
+      x: parseInt(localStorage.getItem('reddit-comment-companion-floatingX') || '100'),
+      y: parseInt(localStorage.getItem('reddit-comment-companion-floatingY') || '100')
+    }
+    setFloatingPosition(initialPosition)
+  }, [])
+
   const [floatingSize, setFloatingSize] = useState({
     width: parseInt(localStorage.getItem('reddit-comment-companion-floatingWidth') || '400'),
     height: parseInt(localStorage.getItem('reddit-comment-companion-floatingHeight') || '600')
@@ -46,7 +55,8 @@ export default function FloatingSidebar({ children, show }: FloatingSidebarProps
       right: 0,
       bottom: 0,
       left: 0,
-      pointerEvents: 'none' }}>
+      pointerEvents: 'none' 
+    }}>
       <Rnd
         size={{ width: floatingSize.width, height: floatingSize.height }}
         position={{ x: floatingPosition.x, y: floatingPosition.y }}
@@ -55,7 +65,8 @@ export default function FloatingSidebar({ children, show }: FloatingSidebarProps
         minWidth={300}
         minHeight={400}
         bounds="window"
-        style={{ display: show ? 'block' : 'none', pointerEvents: `auto` }}
+        cancel=".rcc-comments-list"
+        style={{ display: show ? 'block' : 'none', pointerEvents: `auto`, position: 'absolute' }}
       >
         {children}
       </Rnd>
