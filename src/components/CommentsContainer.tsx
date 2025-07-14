@@ -30,7 +30,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   const [sidebarMode, setSidebarMode] = useState(
     localStorage.getItem('reddit-comment-companion-sidebarMode') || 'docked'
   )
-  const scrollRef = useRef(null);  
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     let active = true
@@ -64,8 +64,14 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
       }
     }
 
+    // Clicking on extension element only returns the container with the content as a shadow element
+    // so we can only check if the click is outside the container or not
     const handleClickOutside = (event: MouseEvent) => {
-      if (showContainer && scrollRef.current && !scrollRef.current.contains(event.target as Node)) {
+      if (
+        showContainer &&
+        event.target instanceof Element &&
+        event.target.tagName.toLowerCase() !== "plasmo-csui"
+      ) {
         setShowContainer(false)
       }
     }
