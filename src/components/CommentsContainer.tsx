@@ -30,10 +30,11 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   const [sidebarMode, setSidebarMode] = useState(
     localStorage.getItem('reddit-comment-companion-sidebarMode') || 'docked'
   )
-  const scrollRef = useRef(null);  
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     let active = true
+    
     const loadPost = async () => {
       setPost({title: '', permalink: '', comments: []})
       if(href) {
@@ -47,21 +48,42 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           }
           setLoading(false)
         }
-        
       }
     }
+    
     loadPost()
     return () => {
       active = false // invalidate if component unmounts
     }
   }, [href, sortOption])
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape" && showContainer) {
-      setShowContainer(false)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && showContainer) {
+        setShowContainer(false)
+      }
     }
-  }
-  document.addEventListener("keydown", handleKeyDown)
+
+    // Clicking on extension element only returns the container with the content as a shadow element
+    // so we can only check if the click is outside the container or not
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showContainer &&
+        event.target instanceof Element &&
+        event.target.tagName.toLowerCase() !== "plasmo-csui"
+      ) {
+        setShowContainer(false)
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    document.addEventListener("mousedown", handleClickOutside)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showContainer])
 
   if (!post) {
     return <div>Loading</div>
