@@ -10,6 +10,8 @@ interface SettingsModalProps {
   setContainerWidth: React.Dispatch<React.SetStateAction<number>>
   fontSize: number
   setFontSize: React.Dispatch<React.SetStateAction<number>>
+  sidebarMode: string
+  setSidebarMode: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function SettingsModal({ 
@@ -21,7 +23,9 @@ export default function SettingsModal({
   containerWidth, 
   setContainerWidth,
   fontSize,
-  setFontSize
+  setFontSize,
+  sidebarMode,
+  setSidebarMode
 }: SettingsModalProps) {
 
   const handleSave = () => {
@@ -29,12 +33,23 @@ export default function SettingsModal({
     localStorage.setItem('reddit-comment-companion-maxLevel', maxLevel.toString())
     localStorage.setItem('reddit-comment-companion-containerWidth', containerWidth.toString())
     localStorage.setItem('reddit-comment-companion-fontSize', fontSize.toString())
+    localStorage.setItem('reddit-comment-companion-sidebarMode', sidebarMode)
     onClose()
   }
 
   return (
     <div className="rcc-settings-modal">
       <div className="rcc-settings-form">
+        <label className="rcc-form-label">Sidebar Mode:</label>
+        <select
+          className="rcc-form-input"
+          value={sidebarMode}
+          onChange={(e) => setSidebarMode(e.target.value)}
+        >
+          <option value="docked">Docked</option>
+          <option value="floating">Floating</option>
+        </select>
+
         <label className="rcc-form-label">Sort Comments By:</label>
         <select
           className="rcc-form-input"
@@ -64,6 +79,8 @@ export default function SettingsModal({
           type="number"
           value={containerWidth}
           onChange={(e) => setContainerWidth(parseInt(e.target.value))}
+          disabled={sidebarMode === 'floating'}
+          style={{ opacity: sidebarMode === 'floating' ? 0.5 : 1 }}
         />
 
         <label className="rcc-form-label">Font Size (px):</label>
