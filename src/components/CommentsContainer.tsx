@@ -28,24 +28,10 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   )
   const scrollRef = useRef(null);  
 
-  const loadPost = async () => {
-    setPost({title: '', permalink: '', comments: []})
-    if(href) {
-      setShowContainer(true)
-      setLoading(true)
-      const postData = await fetchPost(href, sortOption)
-      setPost(postData)
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = 0;
-      }
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
     let active = true
     
-    const loadPostWithCleanup = async () => {
+    const loadPost = async () => {
       setPost({title: '', permalink: '', comments: []})
       if(href) {
         setShowContainer(true)
@@ -61,7 +47,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
       }
     }
     
-    loadPostWithCleanup()
+    loadPost()
     return () => {
       active = false // invalidate if component unmounts
     }
@@ -106,9 +92,6 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           {title}
         </a>
         <div className="rcc-controls">
-          <button title="Reload Comments" className="rcc-control-button" onClick={() => loadPost()}>
-            <span className="rcc-button-icon">↻</span>
-          </button>
           <button title="Settings" className="rcc-control-button" onClick={() => setShowSettings(true)}>
             <span className="rcc-button-icon">⚙</span>
           </button>
