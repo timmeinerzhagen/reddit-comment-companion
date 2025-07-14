@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Rnd } from 'react-rnd'
 
 interface FloatingSidebarProps {
@@ -10,7 +10,7 @@ export default function FloatingSidebar({ children, show }: FloatingSidebarProps
   const [floatingPosition, setFloatingPosition] = useState({
     x: parseInt(localStorage.getItem('reddit-comment-companion-floatingX') || '100'),
     y: parseInt(localStorage.getItem('reddit-comment-companion-floatingY') || '100')
-  })
+  })  
   const [floatingSize, setFloatingSize] = useState({
     width: parseInt(localStorage.getItem('reddit-comment-companion-floatingWidth') || '400'),
     height: parseInt(localStorage.getItem('reddit-comment-companion-floatingHeight') || '600')
@@ -38,17 +38,27 @@ export default function FloatingSidebar({ children, show }: FloatingSidebarProps
   }
 
   return (
-    <Rnd
-      size={{ width: floatingSize.width, height: floatingSize.height }}
-      offsetFromParent={{ x: floatingPosition.x, y: floatingPosition.y }}
-      onDragStop={handleFloatingDrag}
-      onResizeStop={handleFloatingResize}
-      minWidth={300}
-      minHeight={400}
-      bounds="window"
-      style={{ display: show ? 'block' : 'none', position: `fixed` }}
-    >
-      {children}
-    </Rnd>
+    <div style={{ 
+      position: 'fixed', 
+      width: '100vw', 
+      height: '100vh', 
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      pointerEvents: 'none' }}>
+      <Rnd
+        size={{ width: floatingSize.width, height: floatingSize.height }}
+        position={{ x: floatingPosition.x, y: floatingPosition.y }}
+        onDragStop={handleFloatingDrag}
+        onResizeStop={handleFloatingResize}
+        minWidth={300}
+        minHeight={400}
+        bounds="window"
+        style={{ display: show ? 'block' : 'none', pointerEvents: `auto` }}
+      >
+        {children}
+      </Rnd>
+    </div>
   )
 }
