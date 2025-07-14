@@ -16,6 +16,34 @@
   -ms-overflow-style: none;
 }
 
+/* Floating mode specific styles */
+.rcc-comments-container.rcc-floating {
+  resize: both;
+  min-width: 300px;
+  min-height: 200px;
+  max-width: 90vw;
+  max-height: 90vh;
+  height: auto;
+}
+
+/* Docked mode specific styles */
+.rcc-comments-container.rcc-docked {
+  top: 0;
+  right: 0;
+  height: 100vh;
+}
+
+/* Resize handle for floating windows */
+.rcc-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: se-resize;
+  background: linear-gradient(-45deg, transparent 0%, transparent 30%, #D7DADC 30%, #D7DADC 40%, transparent 40%, transparent 50%, #D7DADC 50%, #D7DADC 60%, transparent 60%, transparent 70%, #D7DADC 70%, #D7DADC 80%, transparent 80%);
+}
+
 /* Top Bar */
 .rcc-top-bar {
   position: sticky;

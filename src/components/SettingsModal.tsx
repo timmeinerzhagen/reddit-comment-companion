@@ -10,6 +10,8 @@ interface SettingsModalProps {
   setContainerWidth: React.Dispatch<React.SetStateAction<number>>
   fontSize: number
   setFontSize: React.Dispatch<React.SetStateAction<number>>
+  windowMode: string
+  setWindowMode: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function SettingsModal({ 
@@ -21,7 +23,9 @@ export default function SettingsModal({
   containerWidth, 
   setContainerWidth,
   fontSize,
-  setFontSize
+  setFontSize,
+  windowMode,
+  setWindowMode
 }: SettingsModalProps) {
 
   const handleSave = () => {
@@ -29,12 +33,23 @@ export default function SettingsModal({
     localStorage.setItem('reddit-comment-companion-maxLevel', maxLevel.toString())
     localStorage.setItem('reddit-comment-companion-containerWidth', containerWidth.toString())
     localStorage.setItem('reddit-comment-companion-fontSize', fontSize.toString())
+    localStorage.setItem('reddit-comment-companion-windowMode', windowMode)
     onClose()
   }
 
   return (
     <div className="rcc-settings-modal">
       <div className="rcc-settings-form">
+        <label className="rcc-form-label">Window Mode:</label>
+        <select
+          className="rcc-form-input"
+          value={windowMode}
+          onChange={(e) => setWindowMode(e.target.value)}
+        >
+          <option value="docked">Docked</option>
+          <option value="floating">Floating</option>
+        </select>
+
         <label className="rcc-form-label">Sort Comments By:</label>
         <select
           className="rcc-form-input"
@@ -58,13 +73,17 @@ export default function SettingsModal({
           min={0}
         />
 
-        <label className="rcc-form-label">Container Width (% of screen):</label>
-        <input
-          className="rcc-form-input"
-          type="number"
-          value={containerWidth}
-          onChange={(e) => setContainerWidth(parseInt(e.target.value))}
-        />
+        {windowMode === 'docked' && (
+          <>
+            <label className="rcc-form-label">Container Width (% of screen):</label>
+            <input
+              className="rcc-form-input"
+              type="number"
+              value={containerWidth}
+              onChange={(e) => setContainerWidth(parseInt(e.target.value))}
+            />
+          </>
+        )}
 
         <label className="rcc-form-label">Font Size (px):</label>
         <input
