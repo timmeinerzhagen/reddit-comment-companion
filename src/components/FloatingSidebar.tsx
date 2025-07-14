@@ -46,7 +46,7 @@ export default function FloatingSidebar({ children, show }: FloatingSidebarProps
       minWidth={300}
       minHeight={400}
       bounds="window"
-      style={{ display: show ? 'block' : 'none' }}
+      style={{ display: show ? 'block' : 'none', position: `fixed` }}
     >
       {children}
     </Rnd>
