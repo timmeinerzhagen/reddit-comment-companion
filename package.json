@@ -1,7 +1,7 @@
 {
   "name": "reddit-comment-companion",
   "displayName": "Reddit comment companion",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Show comments for a Reddit post on the overview page",
   "author": "Tim Jonas Meinerzhagen",
   "scripts": {
@@ -10,19 +10,27 @@
     "package": "plasmo package"
   },
   "dependencies": {
-    "plasmo": "0.90.3",
+    "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-rnd": "^10.5.2"
+    "react-rnd": "^10.5.2",
+    "svgo": "^4.0.0"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
-    "@types/chrome": "0.0.258",
-    "@types/node": "20.11.5",
-    "@types/react": "18.2.48",
-    "@types/react-dom": "18.2.18",
-    "prettier": "3.2.4",
-    "typescript": "5.3.3"
+    "@ianvs/prettier-plugin-sort-imports": "4.7.0",
+    "@types/chrome": "0.1.32",
+    "@types/node": "25.0.3",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "prettier": "3.7.4",
+    "typescript": "5.9.3"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "svgo": "*"
+      }
+    }
   },
   "manifest": {
     "manifest_version": 3,
