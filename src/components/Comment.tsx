@@ -41,7 +41,7 @@ export default function Comment({ comment, level, maxLevel, fontSize = 14 }: Com
       link.replaceWith(img)
     }
   })
-  
+
   return (
     <div className={level > 0 ? 'rcc-reply' : 'rcc-comment'}>
       <div 
@@ -67,9 +67,7 @@ export default function Comment({ comment, level, maxLevel, fontSize = 14 }: Com
         </a>
         <span> | </span>
         <span>
-            <span 
-              title={`${comment.ups / (comment.downs+1) * 100}% | Up: +${comment.ups} | Down: ${comment.downs}`}
-            >
+            <span>
               {comment.score_hidden ? '?' : (comment.score > 0 ? '+' : '') + comment.score}
             </span>
         </span>
