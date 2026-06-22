@@ -8,9 +8,10 @@ import FloatingSidebar from './FloatingSidebar'
 interface CommentsContainerProps {
   href: string
   title: string
+  onContainerClose?: () => void
 }
 
-export default function CommentsContainer({ href, title }: CommentsContainerProps) {
+export default function CommentsContainer({ href, title, onContainerClose }: CommentsContainerProps) {
   const [post, setPost] = useState<RedditPost>(null)
   const [showSettings, setShowSettings] = useState(false)
   const [showContainer, setShowContainer] = useState(false)
@@ -31,6 +32,11 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
     localStorage.getItem('reddit-comment-companion-sidebarMode') || 'docked'
   )
   const scrollRef = useRef(null);
+
+  const closeContainer = () => {
+    setShowContainer(false)
+    onContainerClose?.()
+  }
 
   useEffect(() => {
     let active = true
@@ -60,7 +66,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && showContainer) {
-        setShowContainer(false)
+        closeContainer()
       }
     }
 
@@ -72,7 +78,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
         event.target instanceof Element &&
         event.target.tagName.toLowerCase() !== "plasmo-csui"
       ) {
-        setShowContainer(false)
+        closeContainer()
       }
     }
 
@@ -83,7 +89,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
       document.removeEventListener("keydown", handleKeyDown)
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [showContainer])
+  }, [showContainer, onContainerClose])
 
   if (!post) {
     return <div>Loading</div>
@@ -120,7 +126,7 @@ export default function CommentsContainer({ href, title }: CommentsContainerProp
           <button title="Settings" className="rcc-control-button" onClick={() => setShowSettings(true)}>
             <span className="rcc-button-icon">⚙</span>
           </button>
-          <button title="Close" className="rcc-control-button" onClick={() => setShowContainer(false)}>
+          <button title="Close" className="rcc-control-button" onClick={closeContainer}>
             <span className="rcc-button-icon">✖</span>
           </button>
         </div>

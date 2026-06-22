@@ -19,6 +19,10 @@ const PlasmoOverlay = () => {
   const [href, setHref] = useState<string>('')
   const [title, setTitle] = useState<string>('')
 
+  const handleContainerClose = () => {
+    setHref('')
+  }
+
   useEffect(() => {
     // Attach comment hover listeners
     const attachCommentHoverListeners = () => {
@@ -43,7 +47,7 @@ const PlasmoOverlay = () => {
 
   return (
     <div>
-      <CommentsContainer href={href} title={title}/>
+      <CommentsContainer href={href} title={title} onContainerClose={handleContainerClose}/>
     </div>
   )
 }
