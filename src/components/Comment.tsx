@@ -41,6 +41,26 @@ export default function Comment({ comment, level, maxLevel, fontSize = 14 }: Com
       link.replaceWith(img)
     }
   })
+
+  // Replace Giphy links with actual GIFs
+  tempDiv.querySelectorAll('a').forEach(link => {
+    const url = link.getAttribute('href')
+    if (!url) return
+
+    // Short Giphy links: https://giphy.com/gifs/{id}
+    const shortMatch = url.match(
+      /^https?:\/\/(?:www\.)?giphy\.com\/gifs\/([a-zA-Z0-9]+)(?:[/?#].*)?$/i
+    )
+
+    if (shortMatch?.[1]) {
+      const img = document.createElement('img')
+      img.src = `https://media.giphy.com/media/${shortMatch[1]}/giphy.gif`
+      img.alt = 'Giphy GIF'
+      img.loading = 'lazy'
+      link.replaceWith(img)
+      return
+    }
+  })
   
   return (
     <div className={level > 0 ? 'rcc-reply' : 'rcc-comment'}>
