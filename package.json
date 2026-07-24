@@ -14,7 +14,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-rnd": "^10.5.3",
-    "svgo": "^4.0.1"
+    "svgo": "^4.0.2"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.7.0",
